@@ -1,0 +1,9 @@
+provider "aws" {
+  region = "us-west-2"
+}
+
+module "vpc" {
+  source = "../"
+  aws_region = "us-west-2"
+  vpc_name = "MyVPC"
+}
