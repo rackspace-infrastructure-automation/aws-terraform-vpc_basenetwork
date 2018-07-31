@@ -1,0 +1,35 @@
+version: 2
+jobs:
+  test:
+    docker:
+      - image: hashicorp/terraform:0.11.7
+    steps:
+      - checkout
+      - run: mkdir -p ~/workspace
+      - run: cp -pr .circleci/bin ~/bin
+      - run: mkdir ~/layers && mv tests/* ~/layers/ # temporary module path
+      - run:
+          name: lint tests
+          command: cd ~ && ~/bin/lint.sh
+      - run: cp repo ~/module/layers # restore original module path
+      - run:
+          name: lint module
+          command: cd ~/module  && ../bin/lint.sh
+      - run:
+          name: plan
+          command: cd ~ && ../bin/plan.sh
+      - run:
+          name: apply
+          command: cd ~ && ../bin/apply.sh || echo "apply failed."
+      - run:
+          name: destroy
+          command: cd ~ && ../bin/destroy.sh  # must succeed or we have something to clean up manually
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - test:
+          filters:
+            branches:
+             ignore: master
