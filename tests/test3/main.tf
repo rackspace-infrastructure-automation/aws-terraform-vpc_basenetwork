@@ -4,7 +4,7 @@ provider "aws" {
 }
 
 module "vpc" {
-  source = "~/repo"
+  source = "../../module"
 
   vpc_name  = "Test3VPC"
   build_vpn = true
