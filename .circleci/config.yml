@@ -12,6 +12,10 @@ jobs:
       - run:
           name: lint tests
           command: cd ~ && ~/bin/lint.sh
+      - run: mkdir -p ~/example_lint/layers/ && mv ~/module/examples/ ~/example_lint/layers/
+      - run:
+          name: lint examples
+          command: cd ~/example_lint  && ~/bin/lint.sh
       - run: mkdir -p ~/module_lint/layers/ && cp -pr ~/module/ ~/module_lint/layers/module/
       - run:
           name: lint module
