@@ -6,7 +6,7 @@ provider "aws" {
 module "vpc" {
   source = "~/repo"
 
-  vpc_name  = "MyVPC"
+  vpc_name  = "Test3VPC"
   build_vpn = true
   spoke_vpc = true
 }

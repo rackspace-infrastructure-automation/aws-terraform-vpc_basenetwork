@@ -6,5 +6,5 @@ provider "aws" {
 module "vpc" {
   source = "~/repo"
 
-  vpc_name = "MyVPC"
+  vpc_name = "Test1VPC"
 }

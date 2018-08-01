@@ -6,7 +6,7 @@ provider "aws" {
 module "vpc" {
   source = "~/repo"
 
-  vpc_name   = "MyVPC"
+  vpc_name   = "Test2VPC"
   custom_azs = ["us-west-2a", "us-west-2b"]
 
   cidr_range          = "10.0.0.0/16"
