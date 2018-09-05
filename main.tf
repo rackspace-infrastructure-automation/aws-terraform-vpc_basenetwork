@@ -51,14 +51,14 @@ resource aws_internet_gateway "igw" {
 #############
 
 resource aws_eip "nat_eip" {
-  count      = "${var.az_count}"
+  count      = "${var.build_nat_gateways ? var.az_count : 0}"
   vpc        = true
   depends_on = ["aws_internet_gateway.igw"]
   tags       = "${merge(local.base_tags, map("Name", format("%s-NATEIP%d", var.vpc_name, count.index + 1)), var.custom_tags)}"
 }
 
 resource aws_nat_gateway "nat" {
-  count         = "${var.az_count}"
+  count         = "${var.build_nat_gateways ? var.az_count : 0}"
   allocation_id = "${element(aws_eip.nat_eip.*.id, count.index)}"
   subnet_id     = "${element(aws_subnet.public_subnet.*.id, count.index)}"
   depends_on    = ["aws_internet_gateway.igw"]
@@ -110,7 +110,7 @@ resource aws_route "public_routes" {
 }
 
 resource aws_route "private_routes" {
-  count                  = "${var.az_count}"
+  count                  = "${var.build_nat_gateways ? var.az_count : 0}"
   route_table_id         = "${element(aws_route_table.private_route_table.*.id, count.index)}"
   nat_gateway_id         = "${element(aws_nat_gateway.nat.*.id, count.index)}"
   destination_cidr_block = "0.0.0.0/0"

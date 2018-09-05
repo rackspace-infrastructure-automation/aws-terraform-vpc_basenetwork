@@ -107,6 +107,12 @@ variable "build_flow_logs" {
   type        = "string"
 }
 
+variable "build_nat_gateways" {
+  description = "Whether or not to build a NAT gateway per AZ"
+  default     = "true"
+  type        = "string"
+}
+
 variable "build_vpn" {
   description = "Whether or not to build a VPN gateway"
   default     = "false"
