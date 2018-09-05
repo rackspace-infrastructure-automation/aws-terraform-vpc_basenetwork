@@ -19,8 +19,8 @@ data "aws_region" "current" {}
 resource aws_vpc "vpc" {
   cidr_block           = "${var.cidr_range}"
   instance_tenancy     = "${var.default_tenancy}"
-  enable_dns_hostnames = true
-  enable_dns_support   = true
+  enable_dns_hostnames = "${var.enable_dns_hostnames}"
+  enable_dns_support   = "${var.enable_dns_support}"
 
   tags = "${merge(local.base_tags, map("Name", var.vpc_name), var.custom_tags)}"
 }

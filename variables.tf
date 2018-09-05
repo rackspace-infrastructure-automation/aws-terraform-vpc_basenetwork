@@ -47,6 +47,18 @@ variable "domain_name_servers" {
   default     = ["AmazonProvidedDNS"]
 }
 
+variable "enable_dns_hostnames" {
+  description = "Whether or not to enable DNS hostnames for the VPC"
+  type        = "string"
+  default     = "true"
+}
+
+variable "enable_dns_support" {
+  description = "Whether or not to enable DNS support for the VPC"
+  type        = "string"
+  default     = "true"
+}
+
 #####################
 # Subnet Core Options
 #####################
