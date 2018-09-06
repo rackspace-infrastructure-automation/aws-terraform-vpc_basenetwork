@@ -47,6 +47,18 @@ variable "domain_name_servers" {
   default     = ["AmazonProvidedDNS"]
 }
 
+variable "enable_dns_hostnames" {
+  description = "Whether or not to enable DNS hostnames for the VPC"
+  type        = "string"
+  default     = "true"
+}
+
+variable "enable_dns_support" {
+  description = "Whether or not to enable DNS support for the VPC"
+  type        = "string"
+  default     = "true"
+}
+
 #####################
 # Subnet Core Options
 #####################
@@ -92,6 +104,12 @@ variable "private_cidr_ranges" {
 variable "build_flow_logs" {
   description = "Whether or not to build flow log components"
   default     = "false"
+  type        = "string"
+}
+
+variable "build_nat_gateways" {
+  description = "Whether or not to build a NAT gateway per AZ"
+  default     = "true"
   type        = "string"
 }
 
