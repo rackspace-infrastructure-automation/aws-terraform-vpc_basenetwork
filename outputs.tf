@@ -16,14 +16,22 @@ output "default_sg" {
 # Subnet Outputs
 ##################
 
+## Since terraform will build across all modules synchronously, there is a possibility instances will be
+## built and bootstrapping will fail before routes are created. Therefore we will add the dependon for
+## the subnets output, to make sure the routes are created first so bootstraping will wait for the routes.
+
 output "public_subnets" {
   value       = "${aws_subnet.public_subnet.*.id}"
   description = "The IDs of the public subnets"
+
+  depends_on = ["aws_route_table_association.public_route_association"]
 }
 
 output "private_subnets" {
   value       = "${aws_subnet.private_subnet.*.id}"
   description = "The IDs for the private subnets"
+
+  depends_on = ["aws_route_table_association.private_route_association"]
 }
 
 output "public_route_tables" {
