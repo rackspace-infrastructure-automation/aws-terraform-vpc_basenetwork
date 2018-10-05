@@ -21,6 +21,7 @@ By default only `vpc_name` is required to be set. Unless changed `aws_region` de
 |------|-------------|:----:|:-----:|:-----:|
 | az_count | Number of AZs to utilize for the subnets | string | `2` | no |
 | build_flow_logs | Whether or not to build flow log components | string | `false` | no |
+| build_nat_gateways | Whether or not to build a NAT gateway per AZ | string | `true` | no |
 | build_vpn | Whether or not to build a VPN gateway | string | `false` | no |
 | cidr_range | CIDR range for the VPC | string | `172.18.0.0/16` | no |
 | custom_azs | A list of AZs that VPC resources will reside in | list | `<list>` | no |
@@ -28,6 +29,8 @@ By default only `vpc_name` is required to be set. Unless changed `aws_region` de
 | default_tenancy | Default tenancy for instances. Either multi-tenant (default) or single-tenant (dedicated) | string | `default` | no |
 | domain_name | Custom domain name for the VPC | string | `` | no |
 | domain_name_servers | Array of custom domain name servers | list | `<list>` | no |
+| enable_dns_hostnames | Whether or not to enable DNS hostnames for the VPC | string | `true` | no |
+| enable_dns_support | Whether or not to enable DNS support for the VPC | string | `true` | no |
 | environment | Application environment for which this network is being created. e.g. Development/Production | string | `Development` | no |
 | private_cidr_ranges | An array of CIDR ranges to use for private subnets | list | `<list>` | no |
 | public_cidr_ranges | An array of CIDR ranges to use for public subnets | list | `<list>` | no |
