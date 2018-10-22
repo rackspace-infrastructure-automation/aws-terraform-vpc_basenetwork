@@ -70,7 +70,7 @@ resource aws_nat_gateway "nat" {
 #############
 
 resource aws_subnet "public_subnet" {
-  count                   = "${var.az_count}"
+  count                   = "${length(var.public_cidr_ranges)}"
   vpc_id                  = "${aws_vpc.vpc.id}"
   cidr_block              = "${var.public_cidr_ranges[count.index]}"
   availability_zone       = "${element(local.azs, count.index)}"
@@ -79,7 +79,7 @@ resource aws_subnet "public_subnet" {
 }
 
 resource aws_subnet "private_subnet" {
-  count                   = "${var.az_count}"
+  count                   = "${length(var.private_cidr_ranges)}"
   vpc_id                  = "${aws_vpc.vpc.id}"
   cidr_block              = "${var.private_cidr_ranges[count.index]}"
   availability_zone       = "${element(local.azs, count.index)}"
@@ -117,13 +117,13 @@ resource aws_route "private_routes" {
 }
 
 resource aws_route_table_association "public_route_association" {
-  count          = "${var.az_count}"
+  count          = "${length(var.public_cidr_ranges)}"
   subnet_id      = "${element(aws_subnet.public_subnet.*.id, count.index)}"
   route_table_id = "${aws_route_table.public_route_table.id}"
 }
 
 resource aws_route_table_association "private_route_association" {
-  count          = "${var.az_count}"
+  count          = "${length(var.private_cidr_ranges)}"
   subnet_id      = "${element(aws_subnet.private_subnet.*.id, count.index)}"
   route_table_id = "${element(aws_route_table.private_route_table.*.id, count.index)}"
 }
