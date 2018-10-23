@@ -70,22 +70,47 @@ resource aws_nat_gateway "nat" {
 #############
 
 resource aws_subnet "public_subnet" {
-  count                   = "${var.az_count}"
+  count                   = "${var.az_count * var.public_subnets_per_az}"
   vpc_id                  = "${aws_vpc.vpc.id}"
   cidr_block              = "${var.public_cidr_ranges[count.index]}"
   availability_zone       = "${element(local.azs, count.index)}"
   map_public_ip_on_launch = true
-  tags                    = "${merge(local.base_tags, map("Name", format("%s-PublicSubnet%d", var.vpc_name, count.index + 1)), var.custom_tags)}"
+
+  tags = "${merge(
+    local.base_tags,
+    map(
+      "Name",
+      format(
+        "%s-%s%d",
+        var.vpc_name,
+        element(var.public_subnet_names, count.index / var.az_count),
+        (count.index % var.az_count) + 1
+      )
+    ),
+    var.custom_tags
+  )}"
 }
 
 resource aws_subnet "private_subnet" {
-  count                   = "${var.az_count}"
+  count                   = "${var.az_count * var.private_subnets_per_az}"
   vpc_id                  = "${aws_vpc.vpc.id}"
   cidr_block              = "${var.private_cidr_ranges[count.index]}"
   availability_zone       = "${element(local.azs, count.index)}"
   map_public_ip_on_launch = false
 
-  tags = "${merge(local.base_tags, map("Name", format("%s-PrivateSubnet%d", var.vpc_name, count.index + 1)), var.custom_tags)}"
+  tags = "${merge(
+    local.base_tags,
+    map(
+      "Name",
+      format(
+        "%s-%s%d",
+        var.vpc_name,
+        element(var.private_subnet_names, count.index / var.az_count),
+        (count.index % var.az_count) + 1
+      )
+    ),
+    var.custom_tags
+  )}"
 }
 
 #########################
@@ -117,13 +142,13 @@ resource aws_route "private_routes" {
 }
 
 resource aws_route_table_association "public_route_association" {
-  count          = "${var.az_count}"
+  count          = "${var.az_count * var.public_subnets_per_az}"
   subnet_id      = "${element(aws_subnet.public_subnet.*.id, count.index)}"
   route_table_id = "${aws_route_table.public_route_table.id}"
 }
 
 resource aws_route_table_association "private_route_association" {
-  count          = "${var.az_count}"
+  count          = "${var.az_count * var.private_subnets_per_az}"
   subnet_id      = "${element(aws_subnet.private_subnet.*.id, count.index)}"
   route_table_id = "${element(aws_route_table.private_route_table.*.id, count.index)}"
 }
