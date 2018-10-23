@@ -11,7 +11,7 @@ By default only `vpc_name` is required to be set. Unless changed `aws_region` de
 * VPC Flow Logs
 * 2 public/private subnets static CIDRs ranges are setup to be used for default cases
 * Public/private subnets with the count related to custom_azs if defined or region AZs automatically calculated by Terraform otherwise
-* NAT Gateways will be created in all public subnets
+* NAT Gateways will be created in each AZ's first public subnet
 * EIPs will be created in all public subnets for NAT gateways to use
 * Route Tables, including routes to NAT gateways if applicable
 

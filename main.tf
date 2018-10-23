@@ -58,7 +58,7 @@ resource aws_eip "nat_eip" {
 }
 
 resource aws_nat_gateway "nat" {
-  count         = "${var.build_nat_gateways ? (var.az_count * var.public_subnets_per_az) : 0}"
+  count         = "${var.build_nat_gateways ? var.az_count : 0}"
   allocation_id = "${element(aws_eip.nat_eip.*.id, count.index)}"
   subnet_id     = "${element(aws_subnet.public_subnet.*.id, count.index)}"
   depends_on    = ["aws_internet_gateway.igw"]
