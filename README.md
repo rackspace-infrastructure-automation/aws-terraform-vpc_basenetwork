@@ -9,7 +9,7 @@ This module sets up basic network components for an account in a specific region
 By default only `vpc_name` is required to be set. Unless changed `aws_region` defaults to `us-west-2` and will need to be updated for other regions. `source` will also need to be declared depending on where the module lives. Given default settings the following resources are created:
 
 * VPC Flow Logs
-* 2 public/private subnets static CIDRs ranges are setup to be used for default cases
+* 2 AZs with public/private subnets from the list of 3 static CIDRs ranges available for each as defaults
 * Public/private subnets with the count related to custom_azs if defined or region AZs automatically calculated by Terraform otherwise
 * NAT Gateways will be created in each AZ's first public subnet
 * EIPs will be created in all public subnets for NAT gateways to use
