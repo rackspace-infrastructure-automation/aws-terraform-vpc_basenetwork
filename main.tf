@@ -75,7 +75,7 @@ resource aws_subnet "public_subnet" {
   cidr_block              = "${var.public_cidr_ranges[count.index]}"
   availability_zone       = "${element(local.azs, count.index)}"
   map_public_ip_on_launch = true
-  tags                    = "${merge(local.base_tags, map("Name", format("%s-PublicSubnet%d", var.vpc_name, count.index + 1)), var.custom_tags)}"
+  tags                    = "${merge(local.base_tags, map("Name", format("%s-%s%d", var.vpc_name, element(var.public_subnet_names, count.index / var.az_count), count.index + 1)), var.custom_tags)}"
 }
 
 resource aws_subnet "private_subnet" {
@@ -84,8 +84,7 @@ resource aws_subnet "private_subnet" {
   cidr_block              = "${var.private_cidr_ranges[count.index]}"
   availability_zone       = "${element(local.azs, count.index)}"
   map_public_ip_on_launch = false
-
-  tags = "${merge(local.base_tags, map("Name", format("%s-PrivateSubnet%d", var.vpc_name, count.index + 1)), var.custom_tags)}"
+  tags                    = "${merge(local.base_tags, map("Name", format("%s-%s%d", var.vpc_name, element(var.private_subnet_names, count.index / var.az_count), count.index + 1)), var.custom_tags)}"
 }
 
 #########################

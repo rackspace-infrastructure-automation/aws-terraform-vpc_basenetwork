@@ -95,6 +95,18 @@ EOF
   default = "1"
 }
 
+variable "public_subnet_names" {
+  description = <<EOF
+Text that will be included in generated name for public subnets. Given the default value of `["Private"]`, subnet
+names in the form \"<vpc_name>-Private<count+1>\", e.g. \"MyVpc-Private2\" will be produced. Otherwise, given a
+list of names with length the same as the value of `az_count`, the first `az_count` subnets will be named using
+the first string in the list, the second `az_count` subnets will be named using the second string, and so on.
+EOF
+
+  type    = "list"
+  default = ["Private"]
+}
+
 variable "private_cidr_ranges" {
   description = "An array of CIDR ranges to use for private subnets"
   type        = "list"
@@ -113,6 +125,18 @@ EOF
 
   type    = "string"
   default = "1"
+}
+
+variable "private_subnet_names" {
+  description = <<EOF
+Text that will be included in generated name for private subnets. Given the default value of `["Public"]`, subnet
+names in the form \"<vpc_name>-Public<count+1>\", e.g. \"MyVpc-Public2\" will be produced. Otherwise, given a
+list of names with length the same as the value of `az_count`, the first `az_count` subnets will be named using
+the first string in the list, the second `az_count` subnets will be named using the second string, and so on.
+EOF
+
+  type    = "list"
+  default = ["Public"]
 }
 
 #######################
