@@ -33,10 +33,10 @@ By default only `vpc_name` is required to be set. Unless changed `aws_region` de
 | enable_dns_support | Whether or not to enable DNS support for the VPC | string | `true` | no |
 | environment | Application environment for which this network is being created. e.g. Development/Production | string | `Development` | no |
 | private_cidr_ranges | An array of CIDR ranges to use for private subnets | list | `<list>` | no |
-| private_subnet_names | Text that will be included in generated name for private subnets. Given the default value of `["Public"]`, subnet names in the form \"<vpc_name>-Public<count+1>\", e.g. \"MyVpc-Public2\" will be produced. Otherwise, given a list of names with length the same as the value of `az_count`, the first `az_count` subnets will be named using the first string in the list, the second `az_count` subnets will be named using the second string, and so on. | list | `<list>` | no |
+| private_subnet_names | Text that will be included in generated name for private subnets. Given the default value of `["Private"]`, subnet names in the form \"<vpc_name>-Private<count+1>\", e.g. \"MyVpc-Public2\" will be produced. Otherwise, given a list of names with length the same as the value of `az_count`, the first `az_count` subnets will be named using the first string in the list, the second `az_count` subnets will be named using the second string, and so on. | list | `<list>` | no |
 | private_subnets_per_az | Number of private subnets to create in each AZ. NOTE: This value, when multiplied by the value of `az_count`, should not exceed the length of the `private_cidr_ranges` list! | string | `1` | no |
 | public_cidr_ranges | An array of CIDR ranges to use for public subnets | list | `<list>` | no |
-| public_subnet_names | Text that will be included in generated name for public subnets. Given the default value of `["Private"]`, subnet names in the form \"<vpc_name>-Private<count+1>\", e.g. \"MyVpc-Private2\" will be produced. Otherwise, given a list of names with length the same as the value of `az_count`, the first `az_count` subnets will be named using the first string in the list, the second `az_count` subnets will be named using the second string, and so on. | list | `<list>` | no |
+| public_subnet_names | Text that will be included in generated name for public subnets. Given the default value of `["Public"]`, subnet names in the form \"<vpc_name>-Public<count+1>\", e.g. \"MyVpc-Public1\" will be produced. Otherwise, given a list of names with length the same as the value of `az_count`, the first `az_count` subnets will be named using the first string in the list, the second `az_count` subnets will be named using the second string, and so on. | list | `<list>` | no |
 | public_subnets_per_az | Number of public subnets to create in each AZ. NOTE: This value, when multiplied by the value of `az_count`, should not exceed the length of the `public_cidr_ranges` list! | string | `1` | no |
 | spoke_vpc | Whether or not the VPN gateway is a spoke of a Transit VPC | string | `false` | no |
 | vpc_name | Name for the VPC | string | - | yes |
@@ -54,8 +54,6 @@ By default only `vpc_name` is required to be set. Unless changed `aws_region` de
 | vpc_id | The ID of the VPC |
 | vpn_gateway | The ID of the VPN gateway if one was created |
 
-
 ### Examples
 
 The `examples` folder contains examples of general usage for easy copy and paste.
-
