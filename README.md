@@ -9,7 +9,7 @@ This module sets up basic network components for an account in a specific region
 By default only `vpc_name` is required to be set. Unless changed `aws_region` defaults to `us-west-2` and will need to be updated for other regions. `source` will also need to be declared depending on where the module lives. Given default settings the following resources are created:
 
 * VPC Flow Logs
-* 3 public/private subnets static CIDRs ranges are setup to be used for default cases
+* 2 public/private subnets static CIDRs ranges are setup to be used for default cases
 * Public/private subnets with the count related to custom_azs if defined or region AZs automatically calculated by Terraform otherwise
 * NAT Gateways will be created in all public subnets
 * EIPs will be created in all public subnets for NAT gateways to use
@@ -33,7 +33,9 @@ By default only `vpc_name` is required to be set. Unless changed `aws_region` de
 | enable_dns_support | Whether or not to enable DNS support for the VPC | string | `true` | no |
 | environment | Application environment for which this network is being created. e.g. Development/Production | string | `Development` | no |
 | private_cidr_ranges | An array of CIDR ranges to use for private subnets | list | `<list>` | no |
+| private_subnets_per_az | Number of private subnets to create in each AZ. NOTE: This value, when multiplied by the value of `az_count`, should not exceed the length of the `private_cidr_ranges` list! | string | `1` | no |
 | public_cidr_ranges | An array of CIDR ranges to use for public subnets | list | `<list>` | no |
+| public_subnets_per_az | Number of public subnets to create in each AZ. NOTE: This value, when multiplied by the value of `az_count`, should not exceed the length of the `public_cidr_ranges` list! | string | `1` | no |
 | spoke_vpc | Whether or not the VPN gateway is a spoke of a Transit VPC | string | `false` | no |
 | vpc_name | Name for the VPC | string | - | yes |
 

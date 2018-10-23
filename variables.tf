@@ -82,8 +82,17 @@ variable "public_cidr_ranges" {
   default = [
     "172.18.168.0/22",
     "172.18.172.0/22",
-    "172.18.176.0/22",
   ]
+}
+
+variable "public_subnets_per_az" {
+  description = <<EOF
+Number of public subnets to create in each AZ. NOTE: This value, when multiplied by the value of `az_count`,
+should not exceed the length of the `public_cidr_ranges` list!
+EOF
+
+  type    = "string"
+  default = "1"
 }
 
 variable "private_cidr_ranges" {
@@ -93,8 +102,17 @@ variable "private_cidr_ranges" {
   default = [
     "172.18.0.0/21",
     "172.18.8.0/21",
-    "172.18.16.0/21",
   ]
+}
+
+variable "private_subnets_per_az" {
+  description = <<EOF
+Number of private subnets to create in each AZ. NOTE: This value, when multiplied by the value of `az_count`,
+should not exceed the length of the `private_cidr_ranges` list!
+EOF
+
+  type    = "string"
+  default = "1"
 }
 
 #######################

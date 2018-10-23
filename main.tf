@@ -58,7 +58,7 @@ resource aws_eip "nat_eip" {
 }
 
 resource aws_nat_gateway "nat" {
-  count         = "${var.build_nat_gateways ? var.az_count : 0}"
+  count         = "${var.build_nat_gateways ? (var.az_count * var.public_subnets_per_az) : 0}"
   allocation_id = "${element(aws_eip.nat_eip.*.id, count.index)}"
   subnet_id     = "${element(aws_subnet.public_subnet.*.id, count.index)}"
   depends_on    = ["aws_internet_gateway.igw"]
@@ -70,7 +70,7 @@ resource aws_nat_gateway "nat" {
 #############
 
 resource aws_subnet "public_subnet" {
-  count                   = "${length(var.public_cidr_ranges)}"
+  count                   = "${var.az_count * var.public_subnets_per_az}"
   vpc_id                  = "${aws_vpc.vpc.id}"
   cidr_block              = "${var.public_cidr_ranges[count.index]}"
   availability_zone       = "${element(local.azs, count.index)}"
@@ -79,7 +79,7 @@ resource aws_subnet "public_subnet" {
 }
 
 resource aws_subnet "private_subnet" {
-  count                   = "${length(var.private_cidr_ranges)}"
+  count                   = "${var.az_count * var.private_subnets_per_az}"
   vpc_id                  = "${aws_vpc.vpc.id}"
   cidr_block              = "${var.private_cidr_ranges[count.index]}"
   availability_zone       = "${element(local.azs, count.index)}"
