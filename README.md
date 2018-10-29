@@ -1,19 +1,28 @@
-# Base Network
-
-## Description
+# aws-terraform-vpc_basenetwork
 
 This module sets up basic network components for an account in a specific region. Optionally it will setup a basic VPN gateway and VPC flow logs.
 
+## Basic Usage
+
+```
+module "vpc" {
+ source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=v0.0.5"
+
+ vpc_name = "MyVPC"
+}
+
+Full working references are available at [examples](examples)
 ## Default Resources
 
 By default only `vpc_name` is required to be set. Unless changed `aws_region` defaults to `us-west-2` and will need to be updated for other regions. `source` will also need to be declared depending on where the module lives. Given default settings the following resources are created:
 
-* VPC Flow Logs
-* 2 AZs with public/private subnets from the list of 3 static CIDRs ranges available for each as defaults
-* Public/private subnets with the count related to custom_azs if defined or region AZs automatically calculated by Terraform otherwise
-* NAT Gateways will be created in each AZ's first public subnet
-* EIPs will be created in all public subnets for NAT gateways to use
-* Route Tables, including routes to NAT gateways if applicable
+- VPC Flow Logs
+- 2 AZs with public/private subnets from the list of 3 static CIDRs ranges available for each as defaults
+- Public/private subnets with the count related to custom_azs if defined or region AZs automatically calculated by Terraform otherwise
+- NAT Gateways will be created in each AZ's first public subnet
+- EIPs will be created in all public subnets for NAT gateways to use
+- Route Tables, including routes to NAT gateways if applicable
+
 
 ## Inputs
 
@@ -47,6 +56,9 @@ By default only `vpc_name` is required to be set. Unless changed `aws_region` de
 |------|-------------|
 | default_sg | The ID of the default SG for the VPC |
 | flowlog_log_group_arn | The ARN of the flow log CloudWatch log group if one was created |
+| internet_gateway | The ID of the Internet Gateway |
+| nat_gateway | The ID of the NAT Gateway if one was created |
+| nat_gateway_eip | The IP of the NAT Gateway if one was created |
 | private_route_tables | The IDs for the private route tables |
 | private_subnets | The IDs for the private subnets |
 | public_route_tables | The IDs for the public route tables |
@@ -54,6 +66,3 @@ By default only `vpc_name` is required to be set. Unless changed `aws_region` de
 | vpc_id | The ID of the VPC |
 | vpn_gateway | The ID of the VPN gateway if one was created |
 
-### Examples
-
-The `examples` folder contains examples of general usage for easy copy and paste.
