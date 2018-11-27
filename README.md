@@ -10,6 +10,7 @@ module "vpc" {
 
  vpc_name = "MyVPC"
 }
+```
 
 Full working references are available at [examples](examples)
 ## Default Resources
