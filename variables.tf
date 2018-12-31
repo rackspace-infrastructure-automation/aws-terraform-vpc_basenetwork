@@ -59,6 +59,12 @@ variable "enable_dns_support" {
   default     = "true"
 }
 
+variable "enable_ipv6" {
+  description = "Whether or not to enable IPv6 support for the VPC"
+  type        = "string"
+  default     = "false"
+}
+
 #####################
 # Subnet Core Options
 #####################

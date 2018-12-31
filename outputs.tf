@@ -72,3 +72,34 @@ output "flowlog_log_group_arn" {
   value       = "${ join(" ", aws_cloudwatch_log_group.flowlog_group.*.arn) }"
   description = "The ARN of the flow log CloudWatch log group if one was created"
 }
+
+# IPv6 Conditional Resource Outputs
+
+output "ipv6_association_id" {
+  value       = "${var.enable_ipv6 == "true" ? aws_vpc.vpc.ipv6_association_id : ""}"
+  description = "The ID of the VPC IPv6 Association ID if one was created"
+}
+
+output "ipv6_cidr_block" {
+  value       = "${var.enable_ipv6 == "true" ? aws_vpc.vpc.ipv6_cidr_block : ""}"
+  description = "The IPv6 CIDR block of the VPC if one was created"
+}
+
+output "public_subnet_ipv6_cidr_block_association_ids" {
+  value       = "${var.enable_ipv6 == "true" ? element(concat(aws_subnet.public_subnet.*.ipv6_cidr_block_association_id, list("")), 0) : ""}"
+  description = "The association IDs of the IPv6 CIDR block of the public subnets"
+
+  depends_on = ["aws_route_table_association.public_route_association"]
+}
+
+output "private_subnet_ipv6_cidr_block_association_ids" {
+  value       = "${var.enable_ipv6 == "true" ? element(concat(aws_subnet.private_subnet.*.ipv6_cidr_block_association_id, list("")), 0) : ""}"
+  description = "The association IDs of the IPv6 CIDR block for the private subnets"
+
+  depends_on = ["aws_route_table_association.private_route_association"]
+}
+
+output "egress_only_internet_gateway_id" {
+  value       = "${var.enable_ipv6 == "true" ? aws_egress_only_internet_gateway.egress_igw.id : ""}"
+  description = "The ID of the Egress Only Internet Gateway if one was created"
+}
