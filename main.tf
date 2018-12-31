@@ -49,7 +49,7 @@ resource aws_vpc "vpc" {
   instance_tenancy                 = "${var.default_tenancy}"
   enable_dns_hostnames             = "${var.enable_dns_hostnames}"
   enable_dns_support               = "${var.enable_dns_support}"
-  assign_generated_ipv6_cidr_block = "${var.enable_ipv6}"
+  assign_generated_ipv6_cidr_block = "${var.prepare_ipv6}"
 
   tags = "${merge(local.base_tags, map("Name", var.vpc_name), var.custom_tags)}"
 }
@@ -94,7 +94,7 @@ resource aws_eip "nat_eip" {
 resource aws_nat_gateway "nat" {
   count         = "${var.build_nat_gateways ? var.az_count : 0}"
   allocation_id = "${element(aws_eip.nat_eip.*.id, count.index)}"
-  subnet_id     = "${element(aws_subnet.public_subnet.*.id, count.index)}"
+  subnet_id     = "${var.enable_ipv6 == "true" ? element(concat(aws_subnet.public_dualstack_subnet.*.id, list("")), count.index) : element(concat(aws_subnet.public_subnet.*.id, list("")), count.index)}"
   depends_on    = ["aws_internet_gateway.igw"]
   tags          = "${merge(local.base_tags, map("Name", format("%s-NATGW%d", var.vpc_name, count.index + 1)), var.custom_tags)}"
 }
@@ -235,7 +235,7 @@ resource aws_route "public_ipv6_routes" {
 resource aws_route "private_ipv6_routes" {
   count                       = "${var.enable_ipv6 == "true" ? var.az_count : 0}"
   route_table_id              = "${element(aws_route_table.private_route_table.*.id, count.index)}"
-  gateway_id                  = "${aws_egress_only_internet_gateway.egress_igw.id}"
+  egress_only_gateway_id      = "${aws_egress_only_internet_gateway.egress_igw.id}"
   destination_ipv6_cidr_block = "::/0"
 }
 
