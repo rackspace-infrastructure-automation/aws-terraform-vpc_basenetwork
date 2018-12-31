@@ -26,14 +26,14 @@ output "internet_gateway" {
 ## the subnets output, to make sure the routes are created first so bootstrapping will wait for the routes.
 
 output "public_subnets" {
-  value       = "${var.enable_ipv6 == "false" ? aws_subnet.public_subnet.*.id : ""}"
+  value       = "${var.enable_ipv6 == "false" ? element(concat(aws_subnet.public_subnet.*.id, list("")), 0) : ""}"
   description = "The IDs of the public subnets"
 
   depends_on = ["aws_route_table_association.public_route_association"]
 }
 
 output "private_subnets" {
-  value       = "${var.enable_ipv6 == "false" ? aws_subnet.private_subnet.*.id : ""}"
+  value       = "${var.enable_ipv6 == "false" ? element(concat(aws_subnet.private_subnet.*.id, list("")), 0) : ""}"
   description = "The IDs for the private subnets"
 
   depends_on = ["aws_route_table_association.private_route_association"]
