@@ -65,9 +65,11 @@ By default only `vpc_name` is required to be set. Unless changed `aws_region` de
 | nat\_gateway | The ID of the NAT Gateway if one was created |
 | nat\_gateway\_eip | The IP of the NAT Gateway if one was created |
 | private\_route\_tables | The IDs for the private route tables |
+| private\_dualstack\_subnets | The IDs of the private dual stack subnets |
 | private\_subnet\_ipv6\_cidr\_block\_association\_ids | The association IDs of the IPv6 CIDR block for the private subnets |
 | private\_subnets | The IDs for the private subnets |
 | public\_route\_tables | The IDs for the public route tables |
+| public\_dualstack\_subnets | The IDs of the public dual stack subnets |
 | public\_subnet\_ipv6\_cidr\_block\_association\_ids | The association IDs of the IPv6 CIDR block of the public subnets |
 | public\_subnets | The IDs of the public subnets |
 | vpc\_id | The ID of the VPC |

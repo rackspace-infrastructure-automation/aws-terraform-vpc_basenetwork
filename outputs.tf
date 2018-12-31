@@ -23,17 +23,17 @@ output "internet_gateway" {
 
 ## Since terraform will build across all modules synchronously, there is a possibility instances will be
 ## built and bootstrapping will fail before routes are created. Therefore we will add the dependon for
-## the subnets output, to make sure the routes are created first so bootstraping will wait for the routes.
+## the subnets output, to make sure the routes are created first so bootstrapping will wait for the routes.
 
 output "public_subnets" {
-  value       = "${aws_subnet.public_subnet.*.id}"
+  value       = "${var.enable_ipv6 == "false" ? aws_subnet.public_subnet.*.id : ""}"
   description = "The IDs of the public subnets"
 
   depends_on = ["aws_route_table_association.public_route_association"]
 }
 
 output "private_subnets" {
-  value       = "${aws_subnet.private_subnet.*.id}"
+  value       = "${var.enable_ipv6 == "false" ? aws_subnet.private_subnet.*.id : ""}"
   description = "The IDs for the private subnets"
 
   depends_on = ["aws_route_table_association.private_route_association"]
@@ -85,15 +85,29 @@ output "ipv6_cidr_block" {
   description = "The IPv6 CIDR block of the VPC if one was created"
 }
 
+output "public_dualstack_subnets" {
+  value       = "${var.enable_ipv6 == "true" ? element(concat(aws_subnet.public_dualstack_subnet.*.id, list("")), 0) : ""}"
+  description = "The IDs of the public dual stack subnets"
+
+  depends_on = ["aws_route_table_association.public_route_association"]
+}
+
+output "private_dualstack_subnets" {
+  value       = "${var.enable_ipv6 == "true" ? element(concat(aws_subnet.private_dualstack_subnet.*.id, list("")), 0) : ""}"
+  description = "The IDs for the private dual stack subnets"
+
+  depends_on = ["aws_route_table_association.private_route_association"]
+}
+
 output "public_subnet_ipv6_cidr_block_association_ids" {
-  value       = "${var.enable_ipv6 == "true" ? element(concat(aws_subnet.public_subnet.*.ipv6_cidr_block_association_id, list("")), 0) : ""}"
+  value       = "${var.enable_ipv6 == "true" ? element(concat(aws_subnet.public_dualstack_subnet.*.ipv6_cidr_block_association_id, list("")), 0) : ""}"
   description = "The association IDs of the IPv6 CIDR block of the public subnets"
 
   depends_on = ["aws_route_table_association.public_route_association"]
 }
 
 output "private_subnet_ipv6_cidr_block_association_ids" {
-  value       = "${var.enable_ipv6 == "true" ? element(concat(aws_subnet.private_subnet.*.ipv6_cidr_block_association_id, list("")), 0) : ""}"
+  value       = "${var.enable_ipv6 == "true" ? element(concat(aws_subnet.private_dualstack_subnet.*.ipv6_cidr_block_association_id, list("")), 0) : ""}"
   description = "The association IDs of the IPv6 CIDR block for the private subnets"
 
   depends_on = ["aws_route_table_association.private_route_association"]

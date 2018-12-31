@@ -62,7 +62,7 @@ variable "enable_dns_support" {
 variable "enable_ipv6" {
   description = "Whether or not to enable IPv6 support for the VPC"
   type        = "string"
-  default     = "true"
+  default     = "false"
 }
 
 #####################
