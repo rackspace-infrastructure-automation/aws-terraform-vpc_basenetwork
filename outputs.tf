@@ -100,6 +100,6 @@ output "private_subnet_ipv6_cidr_block_association_ids" {
 }
 
 output "egress_only_internet_gateway_id" {
-  value       = "${var.enable_ipv6 == "true" ? aws_egress_only_internet_gateway.egress_igw.id : ""}"
+  value       = "${var.enable_ipv6 == "true" ? element(concat(aws_egress_only_internet_gateway.egress_igw.*.id, list("")), 0) : ""}"
   description = "The ID of the Egress Only Internet Gateway if one was created"
 }

@@ -104,9 +104,9 @@ resource aws_nat_gateway "nat" {
 #############
 
 resource aws_subnet "public_subnet" {
-  count                           = "${var.az_count * var.public_subnets_per_az}"
+  count                           = "${var.enable_ipv6 == "true" ? 2 * var.az_count * var.public_subnets_per_az : var.az_count * var.public_subnets_per_az}"
   vpc_id                          = "${aws_vpc.vpc.id}"
-  cidr_block                      = "${var.enable_ipv6 == "true" ? element(compact(concat(var.public_cidr_ranges, cidrsubnet(aws_vpc.vpc.ipv6_cidr_block, 8, length(var.public_cidr_ranges))), count.index)) : var.public_cidr_ranges[count.index]}"
+  cidr_block                      = "${var.enable_ipv6 == "true" ? element(compact(concat(var.public_cidr_ranges, list(cidrsubnet(aws_vpc.vpc.ipv6_cidr_block, 8, count.index)))), count.index) : var.public_cidr_ranges[count.index]}"
   availability_zone               = "${element(local.azs, count.index)}"
   map_public_ip_on_launch         = true
   assign_ipv6_address_on_creation = "${var.enable_ipv6}"
@@ -127,9 +127,9 @@ resource aws_subnet "public_subnet" {
 }
 
 resource aws_subnet "private_subnet" {
-  count                           = "${var.az_count * var.private_subnets_per_az}"
+  count                           = "${var.enable_ipv6 == "true" ? 2 * var.az_count * var.private_subnets_per_az : var.az_count * var.private_subnets_per_az}"
   vpc_id                          = "${aws_vpc.vpc.id}"
-  cidr_block                      = "${var.enable_ipv6 == "true" ? element(compact(concat(var.private_cidr_ranges, cidrsubnet(aws_vpc.vpc.ipv6_cidr_block, 8, length(var.private_cidr_ranges))), count.index)) : var.private_cidr_ranges[count.index]}"
+  cidr_block                      = "${var.enable_ipv6 == "true" ? element(compact(concat(var.private_cidr_ranges, list(cidrsubnet(aws_vpc.vpc.ipv6_cidr_block, 8, count.index)))), count.index) : var.private_cidr_ranges[count.index]}"
   availability_zone               = "${element(local.azs, count.index)}"
   map_public_ip_on_launch         = false
   assign_ipv6_address_on_creation = "${var.enable_ipv6}"
@@ -171,10 +171,10 @@ resource aws_route "public_routes" {
 }
 
 resource aws_route "ipv6_public_routes" {
-  count                  = "${var.enable_ipv6 == "true" ? 1 : 0}"
-  route_table_id         = "${aws_route_table.public_route_table.id}"
-  gateway_id             = "${aws_internet_gateway.igw.id}"
-  destination_cidr_block = "::/0"
+  count                       = "${var.enable_ipv6 == "true" ? 1 : 0}"
+  route_table_id              = "${aws_route_table.public_route_table.id}"
+  gateway_id                  = "${aws_internet_gateway.igw.id}"
+  destination_ipv6_cidr_block = "::/0"
 }
 
 resource aws_route "private_routes" {
@@ -185,10 +185,10 @@ resource aws_route "private_routes" {
 }
 
 resource aws_route "ipv6_private_routes" {
-  count                  = "${var.enable_ipv6 == "true" ? 1 : 0}"
-  route_table_id         = "${aws_route_table.private_route_table.id}"
-  gateway_id             = "${aws_egress_only_internet_gateway.egress_igw.id}"
-  destination_cidr_block = "::/0"
+  count                       = "${var.enable_ipv6 == "true" ? var.az_count : 0}"
+  route_table_id              = "${element(aws_route_table.private_route_table.*.id, count.index)}"
+  gateway_id                  = "${aws_egress_only_internet_gateway.egress_igw.id}"
+  destination_ipv6_cidr_block = "::/0"
 }
 
 resource aws_route_table_association "public_route_association" {
@@ -220,7 +220,7 @@ resource aws_vpn_gateway_route_propagation "vpn_routes_public" {
 }
 
 resource aws_vpn_gateway_route_propagation "vpn_routes_private" {
-  count          = "${var.build_vpn ? length(var.enable_ipv6 == "true" ? concat(var.private_ipv6_cidr_ranges, var.private_cidr_ranges): var.private_cidr_ranges) : 0}"
+  count          = "${var.build_vpn ? length(var.private_cidr_ranges) : 0}"
   vpn_gateway_id = "${aws_vpn_gateway.vpn_gateway.id}"
   route_table_id = "${element(aws_route_table.private_route_table.*.id, count.index)}"
 }
