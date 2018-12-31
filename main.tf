@@ -104,9 +104,10 @@ resource aws_nat_gateway "nat" {
 #############
 
 resource aws_subnet "public_subnet" {
-  count                           = "${var.enable_ipv6 == "true" ? 2 * var.az_count * var.public_subnets_per_az : var.az_count * var.public_subnets_per_az}"
+  count                           = "${var.az_count * var.public_subnets_per_az}"
   vpc_id                          = "${aws_vpc.vpc.id}"
-  cidr_block                      = "${var.enable_ipv6 == "true" ? element(compact(concat(var.public_cidr_ranges, list(cidrsubnet(aws_vpc.vpc.ipv6_cidr_block, 8, count.index)))), count.index) : var.public_cidr_ranges[count.index]}"
+  cidr_block                      = "${var.public_cidr_ranges[count.index]}"
+  ipv6_cidr_block                 = "${var.enable_ipv6 == "true" ? cidrsubnet(aws_vpc.vpc.ipv6_cidr_block, 8, count.index + 1) : ""}"
   availability_zone               = "${element(local.azs, count.index)}"
   map_public_ip_on_launch         = true
   assign_ipv6_address_on_creation = "${var.enable_ipv6}"
@@ -127,9 +128,10 @@ resource aws_subnet "public_subnet" {
 }
 
 resource aws_subnet "private_subnet" {
-  count                           = "${var.enable_ipv6 == "true" ? 2 * var.az_count * var.private_subnets_per_az : var.az_count * var.private_subnets_per_az}"
+  count                           = "${var.az_count * var.private_subnets_per_az}"
   vpc_id                          = "${aws_vpc.vpc.id}"
-  cidr_block                      = "${var.enable_ipv6 == "true" ? element(compact(concat(var.private_cidr_ranges, list(cidrsubnet(aws_vpc.vpc.ipv6_cidr_block, 8, count.index)))), count.index) : var.private_cidr_ranges[count.index]}"
+  cidr_block                      = "${var.private_cidr_ranges[count.index]}"
+  ipv6_cidr_block                 = "${var.enable_ipv6 == "true" ? cidrsubnet(aws_vpc.vpc.ipv6_cidr_block, 8, count.index + 100) : ""}"
   availability_zone               = "${element(local.azs, count.index)}"
   map_public_ip_on_launch         = false
   assign_ipv6_address_on_creation = "${var.enable_ipv6}"
