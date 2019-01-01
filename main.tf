@@ -49,7 +49,7 @@ resource aws_vpc "vpc" {
   instance_tenancy                 = "${var.default_tenancy}"
   enable_dns_hostnames             = "${var.enable_dns_hostnames}"
   enable_dns_support               = "${var.enable_dns_support}"
-  assign_generated_ipv6_cidr_block = "${var.prepare_ipv6}"
+  assign_generated_ipv6_cidr_block = "${var.enable_ipv6 == "true" ? "true" : var.prepare_ipv6 == "true" ? "true" : "false"}"
 
   tags = "${merge(local.base_tags, map("Name", var.vpc_name), var.custom_tags)}"
 }
@@ -76,7 +76,7 @@ resource aws_internet_gateway "igw" {
 }
 
 resource "aws_egress_only_internet_gateway" "egress_igw" {
-  count  = "${var.enable_ipv6 == "true" ? 1 : 0}"
+  count  = "${var.enable_ipv6 == "true" ? var.enable_private_ipv6 == "true" ? 1 : 0: 0}"
   vpc_id = "${aws_vpc.vpc.id}"
 }
 
@@ -104,7 +104,7 @@ resource aws_nat_gateway "nat" {
 #############
 
 resource aws_subnet "public_subnet" {
-  count                           = "${var.enable_ipv6 == "false" ? var.az_count * var.public_subnets_per_az : 0}"
+  count                           = "${var.enable_ipv6 == "true" ? var.enable_public_ipv6 == "true" ? 0 : var.az_count * var.public_subnets_per_az : var.az_count * var.public_subnets_per_az}"
   vpc_id                          = "${aws_vpc.vpc.id}"
   cidr_block                      = "${var.public_cidr_ranges[count.index]}"
   availability_zone               = "${element(local.azs, count.index)}"
@@ -127,7 +127,7 @@ resource aws_subnet "public_subnet" {
 }
 
 resource aws_subnet "private_subnet" {
-  count                           = "${var.enable_ipv6 == "false" ? var.az_count * var.private_subnets_per_az : 0}"
+  count                           = "${var.enable_ipv6 == "true" ? var.enable_private_ipv6 == "true" ? 0 : var.az_count * var.private_subnets_per_az : var.az_count * var.private_subnets_per_az}"
   vpc_id                          = "${aws_vpc.vpc.id}"
   cidr_block                      = "${var.private_cidr_ranges[count.index]}"
   availability_zone               = "${element(local.azs, count.index)}"
@@ -150,7 +150,7 @@ resource aws_subnet "private_subnet" {
 }
 
 resource aws_subnet "public_dualstack_subnet" {
-  count                           = "${var.enable_ipv6 == "true" ? var.az_count * var.public_subnets_per_az : 0}"
+  count                           = "${var.enable_ipv6 == "true" ? var.enable_public_ipv6 == "true" ? var.az_count * var.public_subnets_per_az : 0 : 0}"
   vpc_id                          = "${aws_vpc.vpc.id}"
   cidr_block                      = "${var.public_cidr_ranges[count.index]}"
   ipv6_cidr_block                 = "${cidrsubnet(aws_vpc.vpc.ipv6_cidr_block, 8, count.index + 1)}"
@@ -174,7 +174,7 @@ resource aws_subnet "public_dualstack_subnet" {
 }
 
 resource aws_subnet "private_dualstack_subnet" {
-  count                           = "${var.enable_ipv6 == "true" ? var.az_count * var.private_subnets_per_az : 0}"
+  count                           = "${var.enable_ipv6 == "true" ? var.enable_private_ipv6 == "true" ? var.az_count * var.private_subnets_per_az : 0 : 0}"
   vpc_id                          = "${aws_vpc.vpc.id}"
   cidr_block                      = "${var.private_cidr_ranges[count.index]}"
   ipv6_cidr_block                 = "${var.enable_ipv6 == "true" ? cidrsubnet(aws_vpc.vpc.ipv6_cidr_block, 8, count.index + 100) : ""}"
@@ -226,39 +226,39 @@ resource aws_route "private_routes" {
 }
 
 resource aws_route "public_ipv6_routes" {
-  count                       = "${var.enable_ipv6 == "true" ? 1 : 0}"
+  count                       = "${var.enable_ipv6 == "true" ? var.enable_public_ipv6 == "true" ? 1 : 0 : 0}"
   route_table_id              = "${aws_route_table.public_route_table.id}"
   gateway_id                  = "${aws_internet_gateway.igw.id}"
   destination_ipv6_cidr_block = "::/0"
 }
 
 resource aws_route "private_ipv6_routes" {
-  count                       = "${var.enable_ipv6 == "true" ? var.az_count : 0}"
+  count                       = "${var.enable_ipv6 == "true" ? var.enable_private_ipv6 == "true" ? var.az_count : 0 : 0}"
   route_table_id              = "${element(aws_route_table.private_route_table.*.id, count.index)}"
   egress_only_gateway_id      = "${aws_egress_only_internet_gateway.egress_igw.id}"
   destination_ipv6_cidr_block = "::/0"
 }
 
 resource aws_route_table_association "public_route_association" {
-  count          = "${var.enable_ipv6 == "false" ? var.az_count * var.public_subnets_per_az : 0}"
+  count          = "${var.enable_ipv6 == "true" ? var.enable_public_ipv6 == "true" ? 0 : var.az_count * var.public_subnets_per_az : var.az_count * var.public_subnets_per_az}"
   subnet_id      = "${element(aws_subnet.public_subnet.*.id, count.index)}"
   route_table_id = "${aws_route_table.public_route_table.id}"
 }
 
 resource aws_route_table_association "private_route_association" {
-  count          = "${var.enable_ipv6 == "false" ? var.az_count * var.private_subnets_per_az : 0}"
+  count          = "${var.enable_ipv6 == "true" ? var.enable_private_ipv6 == "true" ? 0 : var.az_count * var.private_subnets_per_az : var.az_count * var.private_subnets_per_az}"
   subnet_id      = "${element(aws_subnet.private_subnet.*.id, count.index)}"
   route_table_id = "${element(aws_route_table.private_route_table.*.id, count.index)}"
 }
 
 resource aws_route_table_association "public_ipv6_route_association" {
-  count          = "${var.enable_ipv6 == "true" ? var.az_count * var.public_subnets_per_az : 0}"
+  count          = "${var.enable_ipv6 == "true" ? var.enable_public_ipv6 == "true" ? var.az_count * var.public_subnets_per_az : 0 : 0}"
   subnet_id      = "${element(aws_subnet.public_dualstack_subnet.*.id, count.index)}"
   route_table_id = "${aws_route_table.public_route_table.id}"
 }
 
 resource aws_route_table_association "private_ipv6_route_association" {
-  count          = "${var.enable_ipv6 == "true" ? var.az_count * var.private_subnets_per_az : 0}"
+  count          = "${var.enable_ipv6 == "true" ? var.enable_private_ipv6 == "true" ? var.az_count * var.private_subnets_per_az : 0 : 0}"
   subnet_id      = "${element(aws_subnet.private_dualstack_subnet.*.id, count.index)}"
   route_table_id = "${element(aws_route_table.private_route_table.*.id, count.index)}"
 }
