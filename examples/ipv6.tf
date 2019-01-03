@@ -4,8 +4,8 @@ provider "aws" {
 }
 
 module "vpc" {
-  source              = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=v0.0.6"
-  vpc_name            = "MyVPC"
+  source   = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=v0.0.6"
+  vpc_name = "MyVPC"
 
   enable_ipv6         = "true"
   enable_public_ipv6  = "true"

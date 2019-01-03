@@ -104,11 +104,11 @@ resource aws_nat_gateway "nat" {
 #############
 
 resource aws_subnet "public_subnet" {
-  count                           = "${var.enable_ipv6 == "true" ? var.enable_public_ipv6 == "true" ? 0 : var.az_count * var.public_subnets_per_az : var.az_count * var.public_subnets_per_az}"
-  vpc_id                          = "${aws_vpc.vpc.id}"
-  cidr_block                      = "${var.public_cidr_ranges[count.index]}"
-  availability_zone               = "${element(local.azs, count.index)}"
-  map_public_ip_on_launch         = true
+  count                   = "${var.enable_ipv6 == "true" ? var.enable_public_ipv6 == "true" ? 0 : var.az_count * var.public_subnets_per_az : var.az_count * var.public_subnets_per_az}"
+  vpc_id                  = "${aws_vpc.vpc.id}"
+  cidr_block              = "${var.public_cidr_ranges[count.index]}"
+  availability_zone       = "${element(local.azs, count.index)}"
+  map_public_ip_on_launch = true
 
   tags = "${merge(
     local.base_tags,
@@ -126,11 +126,11 @@ resource aws_subnet "public_subnet" {
 }
 
 resource aws_subnet "private_subnet" {
-  count                           = "${var.enable_ipv6 == "true" ? var.enable_private_ipv6 == "true" ? 0 : var.az_count * var.private_subnets_per_az : var.az_count * var.private_subnets_per_az}"
-  vpc_id                          = "${aws_vpc.vpc.id}"
-  cidr_block                      = "${var.private_cidr_ranges[count.index]}"
-  availability_zone               = "${element(local.azs, count.index)}"
-  map_public_ip_on_launch         = false
+  count                   = "${var.enable_ipv6 == "true" ? var.enable_private_ipv6 == "true" ? 0 : var.az_count * var.private_subnets_per_az : var.az_count * var.private_subnets_per_az}"
+  vpc_id                  = "${aws_vpc.vpc.id}"
+  cidr_block              = "${var.private_cidr_ranges[count.index]}"
+  availability_zone       = "${element(local.azs, count.index)}"
+  map_public_ip_on_launch = false
 
   tags = "${merge(
     local.base_tags,
