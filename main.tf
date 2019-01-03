@@ -49,7 +49,7 @@ resource aws_vpc "vpc" {
   instance_tenancy                 = "${var.default_tenancy}"
   enable_dns_hostnames             = "${var.enable_dns_hostnames}"
   enable_dns_support               = "${var.enable_dns_support}"
-  assign_generated_ipv6_cidr_block = "${var.enable_ipv6 == "true" ? "true" : var.prepare_ipv6 == "true" ? "true" : "false"}"
+  assign_generated_ipv6_cidr_block = "${var.enable_ipv6}"
 
   tags = "${merge(local.base_tags, map("Name", var.vpc_name), var.custom_tags)}"
 }
@@ -94,7 +94,7 @@ resource aws_eip "nat_eip" {
 resource aws_nat_gateway "nat" {
   count         = "${var.build_nat_gateways ? var.az_count : 0}"
   allocation_id = "${element(aws_eip.nat_eip.*.id, count.index)}"
-  subnet_id     = "${var.enable_ipv6 == "true" ? element(concat(aws_subnet.public_dualstack_subnet.*.id, list("")), count.index) : element(concat(aws_subnet.public_subnet.*.id, list("")), count.index)}"
+  subnet_id     = "${var.enable_ipv6 == "true" ? var.enable_public_ipv6 == "true" ? element(concat(aws_subnet.public_dualstack_subnet.*.id, list("")), count.index) : element(concat(aws_subnet.public_subnet.*.id, list("")), count.index) : element(concat(aws_subnet.public_subnet.*.id, list("")), count.index)}"
   depends_on    = ["aws_internet_gateway.igw"]
   tags          = "${merge(local.base_tags, map("Name", format("%s-NATGW%d", var.vpc_name, count.index + 1)), var.custom_tags)}"
 }
@@ -109,7 +109,6 @@ resource aws_subnet "public_subnet" {
   cidr_block                      = "${var.public_cidr_ranges[count.index]}"
   availability_zone               = "${element(local.azs, count.index)}"
   map_public_ip_on_launch         = true
-  assign_ipv6_address_on_creation = "${var.enable_ipv6}"
 
   tags = "${merge(
     local.base_tags,
@@ -132,7 +131,6 @@ resource aws_subnet "private_subnet" {
   cidr_block                      = "${var.private_cidr_ranges[count.index]}"
   availability_zone               = "${element(local.azs, count.index)}"
   map_public_ip_on_launch         = false
-  assign_ipv6_address_on_creation = "${var.enable_ipv6}"
 
   tags = "${merge(
     local.base_tags,

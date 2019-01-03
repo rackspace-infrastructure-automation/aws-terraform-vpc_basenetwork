@@ -42,11 +42,10 @@ By default only `vpc_name` is required to be set. Unless changed `aws_region` de
 | domain\_name\_servers | Array of custom domain name servers | list | `<list>` | no |
 | enable\_dns\_hostnames | Whether or not to enable DNS hostnames for the VPC | string | `true` | no |
 | enable\_dns\_support | Whether or not to enable DNS support for the VPC | string | `true` | no |
-| enable\_ipv6 | Whether or not to enable IPv6 support for the VPC. Supersedes prepare_ipv6 | string | `false` | no |
+| enable\_ipv6 | Whether or not to assign an IPv6 subnet to the VPC | string | `false` | no |
 | enable\_public\_ipv6 | Whether or not to enable IPv6 support for the VPC's public subnets. Requires enable_ipv6 to be set to true | string | `false` | no |
 | enable\_private\_ipv6 | Whether or not to enable IPv6 support for the VPC's private subnets. Requires enable_ipv6 to be set to true | string | `false` | no |
 | environment | Application environment for which this network is being created. e.g. Development/Production | string | `Development` | no |
-| prepare\_ipv6 | Whether or not to prepare for IPv6 support for the VPC. This will assign an IPv6 subnet to the VPC, but will not do anything else. Superseded by enable_ipv6 | string | `false` | no |
 | private\_cidr\_ranges | An array of CIDR ranges to use for private subnets | list | `<list>` | no |
 | private\_subnet\_names | Text that will be included in generated name for private subnets. Given the default value of `["Private"]`, subnet names in the form \"<vpc_name>-Private<count+1>\", e.g. \"MyVpc-Public2\" will be produced. Otherwise, given a list of names with length the same as the value of `az_count`, the first `az_count` subnets will be named using the first string in the list, the second `az_count` subnets will be named using the second string, and so on. | list | `<list>` | no |
 | private\_subnets\_per\_az | Number of private subnets to create in each AZ. NOTE: This value, when multiplied by the value of `az_count`, should not exceed the length of the `private_cidr_ranges` list! | string | `1` | no |

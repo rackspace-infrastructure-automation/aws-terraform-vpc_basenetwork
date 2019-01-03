@@ -76,12 +76,12 @@ output "flowlog_log_group_arn" {
 # IPv6 Conditional Resource Outputs
 
 output "ipv6_association_id" {
-  value       = "${var.prepare_ipv6 == "true" ? aws_vpc.vpc.ipv6_association_id : var.enable_ipv6 == "true" ? aws_vpc.vpc.ipv6_association_id : ""}"
+  value       = "${var.enable_ipv6 == "true" ? aws_vpc.vpc.ipv6_association_id : ""}"
   description = "The ID of the VPC IPv6 Association ID if one was created"
 }
 
 output "ipv6_cidr_block" {
-  value       = "${var.prepare_ipv6 == "true" ? aws_vpc.vpc.ipv6_cidr_block : var.enable_ipv6 == "true" ? aws_vpc.vpc.ipv6_cidr_block : ""}"
+  value       = "${var.enable_ipv6 == "true" ? aws_vpc.vpc.ipv6_cidr_block : ""}"
   description = "The IPv6 CIDR block of the VPC if one was created"
 }
 

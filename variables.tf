@@ -59,14 +59,8 @@ variable "enable_dns_support" {
   default     = "true"
 }
 
-variable "prepare_ipv6" {
-  description = "Whether or not to prepare for IPv6 support for the VPC. This will assign an IPv6 subnet to the VPC, but will not do anything else. Superseded by enable_ipv6"
-  type        = "string"
-  default     = "false"
-}
-
 variable "enable_ipv6" {
-  description = "Whether or not to enable IPv6 support for the VPC. Supersedes prepare_ipv6"
+  description = "Whether or not to assign an IPv6 subnet to the VPC"
   type        = "string"
   default     = "false"
 }
