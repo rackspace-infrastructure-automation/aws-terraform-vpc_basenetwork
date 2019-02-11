@@ -108,6 +108,15 @@ EOF
   default = ["Public"]
 }
 
+variable "public_subnet_tags" {
+  description = "A list of maps containing tags to be applied to public subnets. List should either be the same length as the number of AZs to apply different tags per set of subnets, or a length of 1 to apply the same tags across all public subnets."
+  type        = "list"
+
+  default = [
+    {},
+  ]
+}
+
 variable "private_cidr_ranges" {
   description = "An array of CIDR ranges to use for private subnets"
   type        = "list"
@@ -139,6 +148,15 @@ EOF
 
   type    = "list"
   default = ["Private"]
+}
+
+variable "private_subnet_tags" {
+  description = "A list of maps containing tags to be applied to private subnets. List should either be the same length as the number of AZs to apply different tags per set of subnets, or a length of 1 to apply the same tags across all private subnets."
+  type        = "list"
+
+  default = [
+    {},
+  ]
 }
 
 #######################
