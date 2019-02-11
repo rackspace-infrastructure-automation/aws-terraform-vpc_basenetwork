@@ -164,7 +164,13 @@ variable "private_subnet_tags" {
 #######################
 
 variable "build_flow_logs" {
-  description = "Whether or not to build flow log components"
+  description = "Whether or not to build flow log components in cloud watch logs"
+  default     = "false"
+  type        = "string"
+}
+
+variable "build_s3_flow_logs" {
+  description = "Whether or not to build flow log components in s3"
   default     = "false"
   type        = "string"
 }
