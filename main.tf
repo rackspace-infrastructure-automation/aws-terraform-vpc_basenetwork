@@ -115,7 +115,8 @@ resource aws_subnet "public_subnet" {
         (count.index % var.az_count) + 1
       )
     ),
-    var.custom_tags
+    var.custom_tags,
+    var.public_subnet_tags[length(var.public_subnet_tags) == 1 ? 0 : count.index / var.az_count]
   )}"
 }
 
@@ -137,7 +138,8 @@ resource aws_subnet "private_subnet" {
         (count.index % var.az_count) + 1
       )
     ),
-    var.custom_tags
+    var.custom_tags,
+    var.private_subnet_tags[length(var.private_subnet_tags) == 1 ? 0 : count.index / var.az_count]
   )}"
 }
 
