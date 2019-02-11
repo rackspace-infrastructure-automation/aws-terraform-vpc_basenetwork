@@ -30,8 +30,8 @@ By default only `vpc_name` is required to be set. Unless changed `aws_region` de
 |------|-------------|:----:|:-----:|:-----:|
 | az\_count | Number of AZs to utilize for the subnets | string | `"2"` | no |
 | build\_flow\_logs | Whether or not to build flow log components in cloud watch logs | string | `"false"` | no |
-| build\_s3\_flow\_logs | Whether or not to build flow log components in s3 | string | `"false"` | no |
 | build\_nat\_gateways | Whether or not to build a NAT gateway per AZ | string | `"true"` | no |
+| build\_s3\_flow\_logs | Whether or not to build flow log components in s3 | string | `"false"` | no |
 | build\_vpn | Whether or not to build a VPN gateway | string | `"false"` | no |
 | cidr\_range | CIDR range for the VPC | string | `"172.18.0.0/16"` | no |
 | custom\_azs | A list of AZs that VPC resources will reside in | list | `<list>` | no |
