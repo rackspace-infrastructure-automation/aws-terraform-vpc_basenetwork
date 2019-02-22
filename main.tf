@@ -218,8 +218,29 @@ resource aws_flow_log "vpc_log" {
 }
 
 resource "aws_s3_bucket" "vpc_log_bucket" {
-  count = "${var.build_s3_flow_logs ? 1 : 0}"
-  tags  = "${merge(local.base_tags, map("Name", format("%s-VPNGateway", var.vpc_name), "transitvpc:spoke", var.spoke_vpc), var.custom_tags)}"
+  count         = "${var.build_s3_flow_logs ? 1 : 0}"
+  tags          = "${merge(local.base_tags, var.custom_tags)}"
+  bucket        = "${var.logging_bucket_name}"
+  acl           = "${var.logging_bucket_access_control}"
+  force_destroy = "${var.logging_bucket_force_destroy}"
+
+  server_side_encryption_configuration {
+    "rule" {
+      "apply_server_side_encryption_by_default" {
+        kms_master_key_id = "${var.logging_bucket_encryption_kms_mster_key}"
+        sse_algorithm     = "${var.logging_bucket_encryption}"
+      }
+    }
+  }
+
+  lifecycle_rule {
+    enabled = true
+    prefix  = "${var.logging_bucket_prefix}"
+
+    expiration {
+      days = "${var.logging_bucket_retention}"
+    }
+  }
 }
 
 resource aws_flow_log "main" {

@@ -42,6 +42,13 @@ By default only `vpc_name` is required to be set. Unless changed `aws_region` de
 | enable\_dns\_hostnames | Whether or not to enable DNS hostnames for the VPC | string | `"true"` | no |
 | enable\_dns\_support | Whether or not to enable DNS support for the VPC | string | `"true"` | no |
 | environment | Application environment for which this network is being created. e.g. Development/Production | string | `"Development"` | no |
+| logging\_bucket\_access\_control | Define ACL for Bucket from one of the [canned ACL](https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl): private, public-read, public-read-write, aws-exec-read, authenticated-read, bucket-owner-read, bucket-owner-full-control, log-delivery-write | string | `"bucket-owner-full-control"` | no |
+| logging\_bucket\_encryption | Enable default bucket encryption. i.e. AES256, aws:kms | string | `"AES256"` | no |
+| logging\_bucket\_encryption\_kms\_mster\_key | The AWS KMS master key ID used for the SSE-KMS encryption. This can only be used when you set the value of sse_algorithm as aws:kms. | string | `""` | no |
+| logging\_bucket\_force\_destroy | Whether all objects should be deleted from the bucket so that the bucket can be destroyed without error. These objects are not recoverable. ie. true | string | `false` | no |
+| logging\_bucket\_name | Bucket name to store s3 flow logs. If empty, to create random bucket name. In conjuction with build_s3_flow_logs | string | `""` | no |
+| logging\_bucket\_prefix | The prefix for the location in the S3 bucket. If you don't specify a prefix, the access logs are stored in the root of the bucket. | string | `""` | no |
+| logging\_bucket\_retention | The number of days to retain load balancer logs. 0 to ratain forever. | string | `""` | no |
 | private\_cidr\_ranges | An array of CIDR ranges to use for private subnets | list | `<list>` | no |
 | private\_subnet\_names | Text that will be included in generated name for private subnets. Given the default value of `["Private"]`, subnet names in the form \"<vpc_name>-Private<count+1>\", e.g. \"MyVpc-Public2\" will be produced. Otherwise, given a list of names with length the same as the value of `az_count`, the first `az_count` subnets will be named using the first string in the list, the second `az_count` subnets will be named using the second string, and so on. | list | `<list>` | no |
 | private\_subnet\_tags | A list of maps containing tags to be applied to private subnets. List should either be the same length as the number of AZs to apply different tags per set of subnets, or a length of 1 to apply the same tags across all private subnets. | list | `<list>` | no |
