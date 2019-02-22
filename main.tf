@@ -209,7 +209,7 @@ resource aws_vpn_gateway_route_propagation "vpn_routes_private" {
 # Flow Logs
 ###########
 
-resource aws_flow_log "vpc_log" {
+resource aws_flow_log "s3_vpc_log" {
   count                = "${var.build_s3_flow_logs ? 1 : 0}"
   log_destination      = "${aws_s3_bucket.vpc_log_bucket.arn}"
   log_destination_type = "s3"
@@ -243,7 +243,7 @@ resource "aws_s3_bucket" "vpc_log_bucket" {
   }
 }
 
-resource aws_flow_log "main" {
+resource aws_flow_log "cw_vpc_log" {
   count           = "${var.build_flow_logs ? 1 : 0}"
   log_destination = "${aws_cloudwatch_log_group.flowlog_group.arn}"
   iam_role_arn    = "${aws_iam_role.flowlog_role.arn}"
