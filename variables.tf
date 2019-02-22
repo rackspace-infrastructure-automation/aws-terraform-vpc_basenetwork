@@ -190,7 +190,7 @@ variable "logging_bucket_access_control" {
 variable "logging_bucket_retention" {
   description = "The number of days to retain load balancer logs. 0 to ratain forever."
   type        = "string"
-  default     = 14
+  default     = "14"
 }
 
 variable "logging_bucket_prefix" {
@@ -214,7 +214,7 @@ variable "logging_bucket_encryption_kms_mster_key" {
 variable "logging_bucket_force_destroy" {
   description = "Whether all objects should be deleted from the bucket so that the bucket can be destroyed without error. These objects are not recoverable. ie. true"
   type        = "string"
-  default     = false
+  default     = "false"
 }
 
 variable "build_nat_gateways" {
