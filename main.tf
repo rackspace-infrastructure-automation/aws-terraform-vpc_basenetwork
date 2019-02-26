@@ -209,12 +209,46 @@ resource aws_vpn_gateway_route_propagation "vpn_routes_private" {
 # Flow Logs
 ###########
 
-resource aws_flow_log "main" {
-  count          = "${var.build_flow_logs ? 1 : 0}"
-  log_group_name = "${aws_cloudwatch_log_group.flowlog_group.name}"
-  iam_role_arn   = "${aws_iam_role.flowlog_role.arn}"
-  vpc_id         = "${aws_vpc.vpc.id}"
-  traffic_type   = "ALL"
+resource aws_flow_log "s3_vpc_log" {
+  count                = "${var.build_s3_flow_logs ? 1 : 0}"
+  log_destination      = "${aws_s3_bucket.vpc_log_bucket.arn}"
+  log_destination_type = "s3"
+  vpc_id               = "${aws_vpc.vpc.id}"
+  traffic_type         = "ALL"
+}
+
+resource "aws_s3_bucket" "vpc_log_bucket" {
+  count         = "${var.build_s3_flow_logs ? 1 : 0}"
+  tags          = "${merge(local.base_tags, var.custom_tags)}"
+  bucket        = "${var.logging_bucket_name}"
+  acl           = "${var.logging_bucket_access_control}"
+  force_destroy = "${var.logging_bucket_force_destroy}"
+
+  server_side_encryption_configuration {
+    "rule" {
+      "apply_server_side_encryption_by_default" {
+        kms_master_key_id = "${var.logging_bucket_encryption_kms_mster_key}"
+        sse_algorithm     = "${var.logging_bucket_encryption}"
+      }
+    }
+  }
+
+  lifecycle_rule {
+    enabled = true
+    prefix  = "${var.logging_bucket_prefix}"
+
+    expiration {
+      days = "${var.logging_bucket_retention}"
+    }
+  }
+}
+
+resource aws_flow_log "cw_vpc_log" {
+  count           = "${var.build_flow_logs ? 1 : 0}"
+  log_destination = "${aws_cloudwatch_log_group.flowlog_group.arn}"
+  iam_role_arn    = "${aws_iam_role.flowlog_role.arn}"
+  vpc_id          = "${aws_vpc.vpc.id}"
+  traffic_type    = "ALL"
 }
 
 resource aws_cloudwatch_log_group "flowlog_group" {

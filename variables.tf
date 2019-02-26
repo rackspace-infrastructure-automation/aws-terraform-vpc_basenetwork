@@ -164,9 +164,57 @@ variable "private_subnet_tags" {
 #######################
 
 variable "build_flow_logs" {
-  description = "Whether or not to build flow log components"
+  description = "Whether or not to build flow log components in cloud watch logs"
   default     = "false"
   type        = "string"
+}
+
+variable "build_s3_flow_logs" {
+  description = "Whether or not to build flow log components in s3"
+  default     = "false"
+  type        = "string"
+}
+
+variable "logging_bucket_name" {
+  description = "Bucket name to store s3 flow logs. If empty, to create random bucket name. In conjuction with build_s3_flow_logs"
+  type        = "string"
+  default     = ""
+}
+
+variable "logging_bucket_access_control" {
+  description = "Define ACL for Bucket from one of the [canned ACL](https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl): private, public-read, public-read-write, aws-exec-read, authenticated-read, bucket-owner-read, bucket-owner-full-control, log-delivery-write"
+  type        = "string"
+  default     = "bucket-owner-full-control"
+}
+
+variable "logging_bucket_retention" {
+  description = "The number of days to retain load balancer logs. 0 to ratain forever."
+  type        = "string"
+  default     = "14"
+}
+
+variable "logging_bucket_prefix" {
+  description = "The prefix for the location in the S3 bucket. If you don't specify a prefix, the access logs are stored in the root of the bucket."
+  type        = "string"
+  default     = ""
+}
+
+variable "logging_bucket_encryption" {
+  description = "Enable default bucket encryption. i.e. AES256 | aws:kms"
+  type        = "string"
+  default     = "AES256"
+}
+
+variable "logging_bucket_encryption_kms_mster_key" {
+  description = "The AWS KMS master key ID used for the SSE-KMS encryption. This can only be used when you set the value of sse_algorithm as aws:kms."
+  type        = "string"
+  default     = ""
+}
+
+variable "logging_bucket_force_destroy" {
+  description = "Whether all objects should be deleted from the bucket so that the bucket can be destroyed without error. These objects are not recoverable. ie. true"
+  type        = "string"
+  default     = "false"
 }
 
 variable "build_nat_gateways" {
