@@ -70,6 +70,7 @@ resource aws_vpc_dhcp_options_association "dhcp_options_association" {
 }
 
 resource aws_internet_gateway "igw" {
+  count  = "${var.build_igw ? 1 : 0}"
   vpc_id = "${aws_vpc.vpc.id}"
   tags   = "${merge(local.base_tags, map("Name", format("%s-IGW", var.vpc_name)), var.custom_tags)}"
 }
@@ -98,7 +99,7 @@ resource aws_nat_gateway "nat" {
 #############
 
 resource aws_subnet "public_subnet" {
-  count                   = "${var.az_count * var.public_subnets_per_az}"
+  count                   = "${var.build_igw ? var.az_count * var.public_subnets_per_az : 0}"
   vpc_id                  = "${aws_vpc.vpc.id}"
   cidr_block              = "${var.public_cidr_ranges[count.index]}"
   availability_zone       = "${element(local.azs, count.index)}"
@@ -148,6 +149,7 @@ resource aws_subnet "private_subnet" {
 #########################
 
 resource aws_route_table "public_route_table" {
+  count  = "${var.build_igw ? 1 : 0}"
   vpc_id = "${aws_vpc.vpc.id}"
   tags   = "${merge(local.base_tags, map("Name", format("%s-PublicRouteTable", var.vpc_name)), var.custom_tags)}"
 }
@@ -159,6 +161,7 @@ resource aws_route_table "private_route_table" {
 }
 
 resource aws_route "public_routes" {
+  count  = "${var.build_igw ? 1 : 0}"
   route_table_id         = "${aws_route_table.public_route_table.id}"
   gateway_id             = "${aws_internet_gateway.igw.id}"
   destination_cidr_block = "0.0.0.0/0"
@@ -172,7 +175,7 @@ resource aws_route "private_routes" {
 }
 
 resource aws_route_table_association "public_route_association" {
-  count          = "${var.az_count * var.public_subnets_per_az}"
+  count          = "${var.build_igw ? var.az_count * var.public_subnets_per_az : 0}"
   subnet_id      = "${element(aws_subnet.public_subnet.*.id, count.index)}"
   route_table_id = "${aws_route_table.public_route_table.id}"
 }

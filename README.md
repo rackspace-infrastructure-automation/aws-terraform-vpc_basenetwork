@@ -29,6 +29,7 @@ By default only `vpc_name` is required to be set. Unless changed `aws_region` de
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
 | az\_count | Number of AZs to utilize for the subnets | string | `"2"` | no |
+| build\_igw | Whether or not to build internet gateway (also turn off public subnets, route tables, associations) | string | `"true"` | no |
 | build\_flow\_logs | Whether or not to build flow log components in cloud watch logs | string | `"false"` | no |
 | build\_nat\_gateways | Whether or not to build a NAT gateway per AZ | string | `"true"` | no |
 | build\_s3\_flow\_logs | Whether or not to build flow log components in s3 | string | `"false"` | no |
