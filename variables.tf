@@ -228,15 +228,3 @@ variable "build_nat_gateways" {
   default     = "true"
   type        = "string"
 }
-
-variable "build_vpn" {
-  description = "Whether or not to build a VPN gateway"
-  default     = "false"
-  type        = "string"
-}
-
-variable "spoke_vpc" {
-  description = "Whether or not the VPN gateway is a spoke of a Transit VPC"
-  default     = "false"
-  type        = "string"
-}
