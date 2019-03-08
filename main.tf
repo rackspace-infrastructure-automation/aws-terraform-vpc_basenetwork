@@ -7,7 +7,7 @@
  *
  *```
  *module "vpc" {
- *  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=v0.0.5"
+ *  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=v0.0.9"
  *
  *  vpc_name = "MyVPC"
  *}
@@ -70,6 +70,8 @@ resource aws_vpc_dhcp_options_association "dhcp_options_association" {
 }
 
 resource aws_internet_gateway "igw" {
+  count = "${var.build_igw ? 1 : 0}"
+
   vpc_id = "${aws_vpc.vpc.id}"
   tags   = "${merge(local.base_tags, map("Name", format("%s-IGW", var.vpc_name)), var.custom_tags)}"
 }
@@ -79,14 +81,16 @@ resource aws_internet_gateway "igw" {
 #############
 
 resource aws_eip "nat_eip" {
-  count      = "${var.build_nat_gateways ? var.az_count : 0}"
+  count = "${var.build_nat_gateways && var.build_igw ? var.az_count : 0}"
+
   vpc        = true
   depends_on = ["aws_internet_gateway.igw"]
   tags       = "${merge(local.base_tags, map("Name", format("%s-NATEIP%d", var.vpc_name, count.index + 1)), var.custom_tags)}"
 }
 
 resource aws_nat_gateway "nat" {
-  count         = "${var.build_nat_gateways ? var.az_count : 0}"
+  count = "${var.build_nat_gateways && var.build_igw ? var.az_count : 0}"
+
   allocation_id = "${element(aws_eip.nat_eip.*.id, count.index)}"
   subnet_id     = "${element(aws_subnet.public_subnet.*.id, count.index)}"
   depends_on    = ["aws_internet_gateway.igw"]
@@ -98,7 +102,8 @@ resource aws_nat_gateway "nat" {
 #############
 
 resource aws_subnet "public_subnet" {
-  count                   = "${var.az_count * var.public_subnets_per_az}"
+  count = "${var.build_igw ? var.az_count * var.public_subnets_per_az : 0}"
+
   vpc_id                  = "${aws_vpc.vpc.id}"
   cidr_block              = "${var.public_cidr_ranges[count.index]}"
   availability_zone       = "${element(local.azs, count.index)}"
@@ -148,6 +153,8 @@ resource aws_subnet "private_subnet" {
 #########################
 
 resource aws_route_table "public_route_table" {
+  count = "${var.build_igw ? 1 : 0}"
+
   vpc_id = "${aws_vpc.vpc.id}"
   tags   = "${merge(local.base_tags, map("Name", format("%s-PublicRouteTable", var.vpc_name)), var.custom_tags)}"
 }
@@ -159,20 +166,24 @@ resource aws_route_table "private_route_table" {
 }
 
 resource aws_route "public_routes" {
+  count = "${var.build_igw ? 1 : 0}"
+
   route_table_id         = "${aws_route_table.public_route_table.id}"
   gateway_id             = "${aws_internet_gateway.igw.id}"
   destination_cidr_block = "0.0.0.0/0"
 }
 
 resource aws_route "private_routes" {
-  count                  = "${var.build_nat_gateways ? var.az_count : 0}"
+  count = "${var.build_nat_gateways && var.build_igw ? var.az_count : 0}"
+
   route_table_id         = "${element(aws_route_table.private_route_table.*.id, count.index)}"
   nat_gateway_id         = "${element(aws_nat_gateway.nat.*.id, count.index)}"
   destination_cidr_block = "0.0.0.0/0"
 }
 
 resource aws_route_table_association "public_route_association" {
-  count          = "${var.az_count * var.public_subnets_per_az}"
+  count = "${var.build_igw ? var.az_count * var.public_subnets_per_az : 0}"
+
   subnet_id      = "${element(aws_subnet.public_subnet.*.id, count.index)}"
   route_table_id = "${aws_route_table.public_route_table.id}"
 }
