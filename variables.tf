@@ -217,8 +217,18 @@ variable "logging_bucket_force_destroy" {
   default     = "false"
 }
 
+variable "build_igw" {
+  description = <<EOF
+Whether or not to build an internet gateway.  If disabled, no public subnets or route tables, internet gateway,
+or NAT Gateways will be created.
+EOF
+
+  default = "true"
+  type    = "string"
+}
+
 variable "build_nat_gateways" {
-  description = "Whether or not to build a NAT gateway per AZ"
+  description = "Whether or not to build a NAT gateway per AZ.  if `build_igw` is set to false, this value is ignored."
   default     = "true"
   type        = "string"
 }
