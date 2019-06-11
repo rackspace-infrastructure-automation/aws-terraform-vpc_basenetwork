@@ -240,8 +240,8 @@ resource "aws_s3_bucket" "vpc_log_bucket" {
   force_destroy = "${var.logging_bucket_force_destroy}"
 
   server_side_encryption_configuration {
-    "rule" {
-      "apply_server_side_encryption_by_default" {
+    rule {
+      apply_server_side_encryption_by_default {
         kms_master_key_id = "${var.logging_bucket_encryption_kms_mster_key}"
         sse_algorithm     = "${var.logging_bucket_encryption}"
       }
