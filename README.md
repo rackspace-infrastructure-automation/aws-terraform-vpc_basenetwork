@@ -6,7 +6,7 @@ This module sets up basic network components for an account in a specific region
 
 ```
 module "vpc" {
- source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=v0.0.9"
+ source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=v0.0.10"
 
  vpc_name = "MyVPC"
 }
@@ -34,7 +34,7 @@ By default only `vpc_name` is required to be set. Unless changed `aws_region` de
 | build\_nat\_gateways | Whether or not to build a NAT gateway per AZ.  if `build_igw` is set to false, this value is ignored. | string | `"true"` | no |
 | build\_s3\_flow\_logs | Whether or not to build flow log components in s3 | string | `"false"` | no |
 | build\_vpn | Whether or not to build a VPN gateway | string | `"false"` | no |
-| cidr\_range | CIDR range for the VPC | string | `"172.18.0.0/16"` | no |
+| cidr\_range | CIDR range for the VPC | string | `"172.18.0.0/19"` | no |
 | custom\_azs | A list of AZs that VPC resources will reside in | list | `<list>` | no |
 | custom\_tags | Optional tags to be applied on top of the base tags on all resources | map | `<map>` | no |
 | default\_tenancy | Default tenancy for instances. Either multi-tenant (default) or single-tenant (dedicated) | string | `"default"` | no |

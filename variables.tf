@@ -25,7 +25,7 @@ variable "vpc_name" {
 
 variable "cidr_range" {
   description = "CIDR range for the VPC"
-  default     = "172.18.0.0/16"
+  default     = "172.18.0.0/19"
   type        = "string"
 }
 
@@ -80,9 +80,9 @@ variable "public_cidr_ranges" {
   type        = "list"
 
   default = [
-    "172.18.168.0/22",
-    "172.18.172.0/22",
-    "172.18.176.0/22",
+    "172.18.0.0/22",
+    "172.18.4.0/22",
+    "172.18.8.0/22",
   ]
 }
 
@@ -122,9 +122,9 @@ variable "private_cidr_ranges" {
   type        = "list"
 
   default = [
-    "172.18.0.0/21",
-    "172.18.8.0/21",
-    "172.18.16.0/21",
+    "172.18.16.0/22",
+    "172.18.20.0/22",
+    "172.18.24.0/22",
   ]
 }
 
