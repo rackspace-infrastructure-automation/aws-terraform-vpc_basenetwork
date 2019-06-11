@@ -51,6 +51,10 @@ resource aws_vpc "vpc" {
   enable_dns_support   = "${var.enable_dns_support}"
 
   tags = "${merge(local.base_tags, map("Name", var.vpc_name), var.custom_tags)}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource aws_vpc_dhcp_options "dhcp_options" {
