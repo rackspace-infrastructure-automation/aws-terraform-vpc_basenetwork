@@ -200,7 +200,7 @@ variable "logging_bucket_prefix" {
 }
 
 variable "logging_bucket_encryption" {
-  description = "Enable default bucket encryption. i.e. AES256 | aws:kms"
+  description = "Enable default bucket encryption. i.e. AES256 or aws:kms"
   type        = "string"
   default     = "AES256"
 }
