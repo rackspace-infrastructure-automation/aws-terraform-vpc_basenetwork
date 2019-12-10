@@ -35,12 +35,18 @@ terraform {
 }
 
 locals {
-  domain_name = var.domain_name == "" ? data.aws_region.current.name == "us-east-1" ? "ec2.internal" : format("%s.compute.internal", data.aws_region.current.name) : var.domain_name
+  default_domain_name = data.aws_region.current.name == "us-east-1" ? "ec2.internal" : format("%s.compute.internal", data.aws_region.current.name)
+  domain_name         = var.domain_name == "" ? local.default_domain_name : var.domain_name
 
   base_tags = {
     ServiceProvider = "Rackspace"
     Environment     = var.environment
   }
+
+  tags = merge(
+    var.custom_tags,
+    local.base_tags
+  )
 
   azs = slice(
     coalescelist(var.custom_azs, data.aws_availability_zones.available.names),
@@ -49,11 +55,9 @@ locals {
   )
 }
 
-data "aws_availability_zones" "available" {
-}
+data "aws_availability_zones" "available" {}
 
-data "aws_region" "current" {
-}
+data "aws_region" "current" {}
 
 #############
 # Basic VPC
@@ -61,16 +65,15 @@ data "aws_region" "current" {
 
 resource "aws_vpc" "vpc" {
   cidr_block           = var.cidr_range
-  instance_tenancy     = var.default_tenancy
   enable_dns_hostnames = var.enable_dns_hostnames
   enable_dns_support   = var.enable_dns_support
+  instance_tenancy     = var.default_tenancy
 
   tags = merge(
-    local.base_tags,
+    local.tags,
     {
-      "Name" = var.vpc_name
+      Name = var.vpc_name
     },
-    var.custom_tags,
   )
 
   lifecycle {
@@ -82,28 +85,29 @@ resource "aws_vpc_dhcp_options" "dhcp_options" {
   domain_name         = local.domain_name
   domain_name_servers = var.domain_name_servers
 
-  tags = {
-    ServiceProvider = "Rackspace"
-    Name            = "${var.vpc_name}-DHCPOptions"
-    Environment     = var.environment
-  }
+  tags = merge(
+    local.tags,
+    {
+      Name = "${var.vpc_name}-DHCPOptions"
+    },
+  )
 }
 
 resource "aws_vpc_dhcp_options_association" "dhcp_options_association" {
-  vpc_id          = aws_vpc.vpc.id
   dhcp_options_id = aws_vpc_dhcp_options.dhcp_options.id
+  vpc_id          = aws_vpc.vpc.id
 }
 
 resource "aws_internet_gateway" "igw" {
   count = var.build_igw ? 1 : 0
 
   vpc_id = aws_vpc.vpc.id
+
   tags = merge(
-    local.base_tags,
+    local.tags,
     {
-      "Name" = format("%s-IGW", var.vpc_name)
+      Name = format("%s-IGW", var.vpc_name)
     },
-    var.custom_tags,
   )
 }
 
@@ -114,15 +118,16 @@ resource "aws_internet_gateway" "igw" {
 resource "aws_eip" "nat_eip" {
   count = var.build_nat_gateways && var.build_igw ? var.az_count : 0
 
-  vpc        = true
-  depends_on = [aws_internet_gateway.igw]
+  vpc = true
+
   tags = merge(
-    local.base_tags,
+    local.tags,
     {
-      "Name" = format("%s-NATEIP%d", var.vpc_name, count.index + 1)
+      Name = format("%s-NATEIP%d", var.vpc_name, count.index + 1)
     },
-    var.custom_tags,
   )
+
+  depends_on = [aws_internet_gateway.igw]
 }
 
 resource "aws_nat_gateway" "nat" {
@@ -130,14 +135,15 @@ resource "aws_nat_gateway" "nat" {
 
   allocation_id = element(aws_eip.nat_eip.*.id, count.index)
   subnet_id     = element(aws_subnet.public_subnet.*.id, count.index)
-  depends_on    = [aws_internet_gateway.igw]
+
   tags = merge(
-    local.base_tags,
+    local.tags,
     {
-      "Name" = format("%s-NATGW%d", var.vpc_name, count.index + 1)
+      Name = format("%s-NATGW%d", var.vpc_name, count.index + 1)
     },
-    var.custom_tags,
   )
+
+  depends_on = [aws_internet_gateway.igw]
 }
 
 #############
@@ -147,45 +153,44 @@ resource "aws_nat_gateway" "nat" {
 resource "aws_subnet" "public_subnet" {
   count = var.build_igw ? var.az_count * var.public_subnets_per_az : 0
 
-  vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = var.public_cidr_ranges[count.index]
   availability_zone       = element(local.azs, count.index)
+  cidr_block              = var.public_cidr_ranges[count.index]
   map_public_ip_on_launch = true
+  vpc_id                  = aws_vpc.vpc.id
 
   tags = merge(
-    local.base_tags,
+    var.public_subnet_tags[length(var.public_subnet_tags) == 1 ? 0 : floor(count.index / var.az_count)],
+    local.tags,
     {
-      "Name" = format(
+      Name = format(
         "%s-%s%d",
         var.vpc_name,
         element(var.public_subnet_names, floor(count.index / var.az_count)),
         count.index % var.az_count + 1,
       )
     },
-    var.custom_tags,
-    var.public_subnet_tags[length(var.public_subnet_tags) == 1 ? 0 : floor(count.index / var.az_count)],
   )
 }
 
 resource "aws_subnet" "private_subnet" {
-  count                   = var.az_count * var.private_subnets_per_az
-  vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = var.private_cidr_ranges[count.index]
+  count = var.az_count * var.private_subnets_per_az
+
   availability_zone       = element(local.azs, count.index)
+  cidr_block              = var.private_cidr_ranges[count.index]
   map_public_ip_on_launch = false
+  vpc_id                  = aws_vpc.vpc.id
 
   tags = merge(
-    local.base_tags,
+    var.private_subnet_tags[length(var.private_subnet_tags) == 1 ? 0 : floor(count.index / var.az_count)],
+    local.tags,
     {
-      "Name" = format(
+      Name = format(
         "%s-%s%d",
         var.vpc_name,
         element(var.private_subnet_names, floor(count.index / var.az_count)),
         count.index % var.az_count + 1,
       )
     },
-    var.custom_tags,
-    var.private_subnet_tags[length(var.private_subnet_tags) == 1 ? 0 : floor(count.index / var.az_count)],
   )
 }
 
@@ -197,54 +202,56 @@ resource "aws_route_table" "public_route_table" {
   count = var.build_igw ? 1 : 0
 
   vpc_id = aws_vpc.vpc.id
+
   tags = merge(
-    local.base_tags,
+    local.tags,
     {
-      "Name" = format("%s-PublicRouteTable", var.vpc_name)
+      Name = format("%s-PublicRouteTable", var.vpc_name)
     },
-    var.custom_tags,
   )
 }
 
 resource "aws_route_table" "private_route_table" {
-  count  = var.az_count
+  count = var.az_count
+
   vpc_id = aws_vpc.vpc.id
+
   tags = merge(
-    local.base_tags,
+    local.tags,
     {
-      "Name" = format("%s-PrivateRouteTable%d", var.vpc_name, count.index + 1)
+      Name = format("%s-PrivateRouteTable%d", var.vpc_name, count.index + 1)
     },
-    var.custom_tags,
   )
 }
 
 resource "aws_route" "public_routes" {
   count = var.build_igw ? 1 : 0
 
-  route_table_id         = aws_route_table.public_route_table[0].id
-  gateway_id             = aws_internet_gateway.igw[0].id
   destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.igw[0].id
+  route_table_id         = aws_route_table.public_route_table[0].id
 }
 
 resource "aws_route" "private_routes" {
   count = var.build_nat_gateways && var.build_igw ? var.az_count : 0
 
-  route_table_id         = element(aws_route_table.private_route_table.*.id, count.index)
-  nat_gateway_id         = element(aws_nat_gateway.nat.*.id, count.index)
   destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = element(aws_nat_gateway.nat.*.id, count.index)
+  route_table_id         = element(aws_route_table.private_route_table.*.id, count.index)
 }
 
 resource "aws_route_table_association" "public_route_association" {
   count = var.build_igw ? var.az_count * var.public_subnets_per_az : 0
 
-  subnet_id      = element(aws_subnet.public_subnet.*.id, count.index)
   route_table_id = aws_route_table.public_route_table[0].id
+  subnet_id      = element(aws_subnet.public_subnet.*.id, count.index)
 }
 
 resource "aws_route_table_association" "private_route_association" {
-  count          = var.az_count * var.private_subnets_per_az
-  subnet_id      = element(aws_subnet.private_subnet.*.id, count.index)
+  count = var.az_count * var.private_subnets_per_az
+
   route_table_id = element(aws_route_table.private_route_table.*.id, count.index)
+  subnet_id      = element(aws_subnet.private_subnet.*.id, count.index)
 }
 
 #####
@@ -252,28 +259,31 @@ resource "aws_route_table_association" "private_route_association" {
 #####
 
 resource "aws_vpn_gateway" "vpn_gateway" {
-  count  = var.build_vpn ? 1 : 0
+  count = var.build_vpn ? 1 : 0
+
   vpc_id = aws_vpc.vpc.id
+
   tags = merge(
-    local.base_tags,
+    local.tags,
     {
-      "Name"             = format("%s-VPNGateway", var.vpc_name)
+      Name               = format("%s-VPNGateway", var.vpc_name)
       "transitvpc:spoke" = var.spoke_vpc
     },
-    var.custom_tags,
   )
 }
 
 resource "aws_vpn_gateway_route_propagation" "vpn_routes_public" {
-  count          = var.build_vpn ? 1 : 0
-  vpn_gateway_id = aws_vpn_gateway.vpn_gateway[0].id
+  count = var.build_vpn ? 1 : 0
+
   route_table_id = aws_route_table.public_route_table[0].id
+  vpn_gateway_id = aws_vpn_gateway.vpn_gateway[0].id
 }
 
 resource "aws_vpn_gateway_route_propagation" "vpn_routes_private" {
-  count          = var.build_vpn ? length(var.private_cidr_ranges) : 0
-  vpn_gateway_id = aws_vpn_gateway.vpn_gateway[0].id
+  count = var.build_vpn ? length(var.private_cidr_ranges) : 0
+
   route_table_id = element(aws_route_table.private_route_table.*.id, count.index)
+  vpn_gateway_id = aws_vpn_gateway.vpn_gateway[0].id
 }
 
 ###########
@@ -281,19 +291,21 @@ resource "aws_vpn_gateway_route_propagation" "vpn_routes_private" {
 ###########
 
 resource "aws_flow_log" "s3_vpc_log" {
-  count                = var.build_s3_flow_logs ? 1 : 0
+  count = var.build_s3_flow_logs ? 1 : 0
+
   log_destination      = aws_s3_bucket.vpc_log_bucket[0].arn
   log_destination_type = "s3"
-  vpc_id               = aws_vpc.vpc.id
   traffic_type         = "ALL"
+  vpc_id               = aws_vpc.vpc.id
 }
 
 resource "aws_s3_bucket" "vpc_log_bucket" {
-  count         = var.build_s3_flow_logs ? 1 : 0
-  tags          = merge(local.base_tags, var.custom_tags)
-  bucket        = var.logging_bucket_name
+  count = var.build_s3_flow_logs ? 1 : 0
+
   acl           = var.logging_bucket_access_control
+  bucket        = var.logging_bucket_name
   force_destroy = var.logging_bucket_force_destroy
+  tags          = local.tags
 
   server_side_encryption_configuration {
     rule {
@@ -315,21 +327,24 @@ resource "aws_s3_bucket" "vpc_log_bucket" {
 }
 
 resource "aws_flow_log" "cw_vpc_log" {
-  count           = var.build_flow_logs ? 1 : 0
-  log_destination = aws_cloudwatch_log_group.flowlog_group[0].arn
+  count = var.build_flow_logs ? 1 : 0
+
   iam_role_arn    = aws_iam_role.flowlog_role[0].arn
-  vpc_id          = aws_vpc.vpc.id
+  log_destination = aws_cloudwatch_log_group.flowlog_group[0].arn
   traffic_type    = "ALL"
+  vpc_id          = aws_vpc.vpc.id
 }
 
 resource "aws_cloudwatch_log_group" "flowlog_group" {
   count = var.build_flow_logs ? 1 : 0
-  name  = "${var.vpc_name}-FlowLogs"
+
+  name = "${var.vpc_name}-FlowLogs"
 }
 
 resource "aws_iam_role" "flowlog_role" {
   count = var.build_flow_logs ? 1 : 0
-  name  = "${var.vpc_name}-FlowLogsRole"
+
+  name = "${var.vpc_name}-FlowLogsRole"
 
   assume_role_policy = <<EOF
 {
@@ -351,8 +366,9 @@ EOF
 
 resource "aws_iam_role_policy" "flowlog_policy" {
   count = var.build_flow_logs ? 1 : 0
-  name  = "${var.vpc_name}-FlowLogsPolicy"
-  role  = aws_iam_role.flowlog_role[0].id
+
+  name = "${var.vpc_name}-FlowLogsPolicy"
+  role = aws_iam_role.flowlog_role[0].id
 
   policy = <<EOF
 {
