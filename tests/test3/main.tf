@@ -11,5 +11,5 @@ module "vpc" {
   source = "../../module"
 
   name      = "Test1VPC"
-  build_igw = "false"
+  build_igw = false
 }

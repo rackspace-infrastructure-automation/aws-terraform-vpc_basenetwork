@@ -5,9 +5,9 @@
  *
  *## Basic Usage
  *
- *```
+ *```HCL
  *module "vpc" {
- *  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=v0.0.10"
+ *  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=v0.12.0"
  *
  *  vpc_name = "MyVPC"
  *}
@@ -24,7 +24,19 @@
  * - NAT Gateways will be created in each AZ's first public subnet
  * - EIPs will be created in all public subnets for NAT gateways to use
  * - Route Tables, including routes to NAT gateways if applicable
-*/
+ *
+ *## Terraform 0.12 upgrade
+ *
+ *Several changes were required while adding terraform 0.12 compatibility.  The following changes should be
+ *made when upgrading from a previous release to version 0.12.0 or higher.
+ *
+ *### Module variables
+ *
+ *The following module variables were updated to better meet current Rackspace style guides:
+ *
+ *- `custom_tags` -> `tags`
+ *- `vpc_name` -> `name`
+ */
 
 terraform {
   required_version = ">= 0.12"
