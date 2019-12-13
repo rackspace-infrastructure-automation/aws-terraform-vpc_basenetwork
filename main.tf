@@ -158,12 +158,12 @@ resource "aws_subnet" "public_subnet" {
       "Name" = format(
         "%s-%s%d",
         var.vpc_name,
-        element(var.public_subnet_names, count.index / var.az_count),
+        element(var.public_subnet_names, floor(count.index / var.az_count)),
         count.index % var.az_count + 1,
       )
     },
     var.custom_tags,
-    var.public_subnet_tags[length(var.public_subnet_tags) == 1 ? 0 : count.index / var.az_count],
+    var.public_subnet_tags[length(var.public_subnet_tags) == 1 ? 0 : floor(count.index / var.az_count)],
   )
 }
 
@@ -180,12 +180,12 @@ resource "aws_subnet" "private_subnet" {
       "Name" = format(
         "%s-%s%d",
         var.vpc_name,
-        element(var.private_subnet_names, count.index / var.az_count),
+        element(var.private_subnet_names, floor(count.index / var.az_count)),
         count.index % var.az_count + 1,
       )
     },
     var.custom_tags,
-    var.private_subnet_tags[length(var.private_subnet_tags) == 1 ? 0 : count.index / var.az_count],
+    var.private_subnet_tags[length(var.private_subnet_tags) == 1 ? 0 : floor(count.index / var.az_count)],
   )
 }
 
