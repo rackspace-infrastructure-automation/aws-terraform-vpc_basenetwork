@@ -50,12 +50,6 @@ variable "custom_azs" {
   default     = []
 }
 
-variable "custom_tags" {
-  description = "Optional tags to be applied on top of the base tags on all resources"
-  type        = map(string)
-  default     = {}
-}
-
 variable "default_tenancy" {
   description = "Default tenancy for instances. Either multi-tenant (default) or single-tenant (dedicated)"
   type        = string
@@ -132,6 +126,11 @@ variable "logging_bucket_retention" {
   description = "The number of days to retain load balancer logs. 0 to ratain forever."
   type        = number
   default     = 14
+}
+
+variable "name" {
+  description = "Name prefix for the VPC and related resources"
+  type        = string
 }
 
 variable "private_cidr_ranges" {
@@ -219,7 +218,9 @@ variable "spoke_vpc" {
   type        = bool
   default     = false
 }
-variable "vpc_name" {
-  description = "Name for the VPC"
-  type        = string
+
+variable "tags" {
+  description = "Optional tags to be applied on top of the base tags on all resources"
+  type        = map(string)
+  default     = {}
 }

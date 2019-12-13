@@ -36,7 +36,6 @@ By default only `vpc_name` is required to be set. Unless changed `aws_region` de
 | build\_vpn | Whether or not to build a VPN gateway | string | `"false"` | no |
 | cidr\_range | CIDR range for the VPC | string | `"172.18.0.0/19"` | no |
 | custom\_azs | A list of AZs that VPC resources will reside in | list | `<list>` | no |
-| custom\_tags | Optional tags to be applied on top of the base tags on all resources | map | `<map>` | no |
 | default\_tenancy | Default tenancy for instances. Either multi-tenant (default) or single-tenant (dedicated) | string | `"default"` | no |
 | domain\_name | Custom domain name for the VPC | string | `""` | no |
 | domain\_name\_servers | Array of custom domain name servers | list | `<list>` | no |
@@ -50,6 +49,7 @@ By default only `vpc_name` is required to be set. Unless changed `aws_region` de
 | logging\_bucket\_name | Bucket name to store s3 flow logs. If empty, to create random bucket name. In conjuction with build_s3_flow_logs | string | `""` | no |
 | logging\_bucket\_prefix | The prefix for the location in the S3 bucket. If you don't specify a prefix, the access logs are stored in the root of the bucket. | string | `""` | no |
 | logging\_bucket\_retention | The number of days to retain load balancer logs. 0 to ratain forever. | string | `"14"` | no |
+| name | Name for the VPC and related resources | string | n/a | yes |
 | private\_cidr\_ranges | An array of CIDR ranges to use for private subnets | list | `<list>` | no |
 | private\_subnet\_names | Text that will be included in generated name for private subnets. Given the default value of `["Private"]`, subnet names in the form \"<vpc_name>-Private<count+1>\", e.g. \"MyVpc-Public2\" will be produced. Otherwise, given a list of names with length the same as the value of `az_count`, the first `az_count` subnets will be named using the first string in the list, the second `az_count` subnets will be named using the second string, and so on. | list | `<list>` | no |
 | private\_subnet\_tags | A list of maps containing tags to be applied to private subnets. List should either be the same length as the number of AZs to apply different tags per set of subnets, or a length of 1 to apply the same tags across all private subnets. | list | `<list>` | no |
@@ -59,7 +59,7 @@ By default only `vpc_name` is required to be set. Unless changed `aws_region` de
 | public\_subnet\_tags | A list of maps containing tags to be applied to public subnets. List should either be the same length as the number of AZs to apply different tags per set of subnets, or a length of 1 to apply the same tags across all public subnets. | list | `<list>` | no |
 | public\_subnets\_per\_az | Number of public subnets to create in each AZ. NOTE: This value, when multiplied by the value of `az_count`, should not exceed the length of the `public_cidr_ranges` list! | string | `"1"` | no |
 | spoke\_vpc | Whether or not the VPN gateway is a spoke of a Transit VPC | string | `"false"` | no |
-| vpc\_name | Name for the VPC | string | n/a | yes |
+| tags | Optional tags to be applied on top of the base tags on all resources | map | `<map>` | no |
 
 ## Outputs
 
@@ -76,4 +76,3 @@ By default only `vpc_name` is required to be set. Unless changed `aws_region` de
 | public\_subnets | The IDs of the public subnets |
 | vpc\_id | The ID of the VPC |
 | vpn\_gateway | The ID of the VPN gateway if one was created |
-

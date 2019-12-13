@@ -44,7 +44,7 @@ locals {
   }
 
   tags = merge(
-    var.custom_tags,
+    var.tags,
     local.base_tags
   )
 
@@ -72,7 +72,7 @@ resource "aws_vpc" "vpc" {
   tags = merge(
     local.tags,
     {
-      Name = var.vpc_name
+      Name = var.name
     },
   )
 
@@ -88,7 +88,7 @@ resource "aws_vpc_dhcp_options" "dhcp_options" {
   tags = merge(
     local.tags,
     {
-      Name = "${var.vpc_name}-DHCPOptions"
+      Name = "${var.name}-DHCPOptions"
     },
   )
 }
@@ -106,7 +106,7 @@ resource "aws_internet_gateway" "igw" {
   tags = merge(
     local.tags,
     {
-      Name = format("%s-IGW", var.vpc_name)
+      Name = format("%s-IGW", var.name)
     },
   )
 }
@@ -123,7 +123,7 @@ resource "aws_eip" "nat_eip" {
   tags = merge(
     local.tags,
     {
-      Name = format("%s-NATEIP%d", var.vpc_name, count.index + 1)
+      Name = format("%s-NATEIP%d", var.name, count.index + 1)
     },
   )
 
@@ -139,7 +139,7 @@ resource "aws_nat_gateway" "nat" {
   tags = merge(
     local.tags,
     {
-      Name = format("%s-NATGW%d", var.vpc_name, count.index + 1)
+      Name = format("%s-NATGW%d", var.name, count.index + 1)
     },
   )
 
@@ -164,7 +164,7 @@ resource "aws_subnet" "public_subnet" {
     {
       Name = format(
         "%s-%s%d",
-        var.vpc_name,
+        var.name,
         element(var.public_subnet_names, floor(count.index / var.az_count)),
         count.index % var.az_count + 1,
       )
@@ -186,7 +186,7 @@ resource "aws_subnet" "private_subnet" {
     {
       Name = format(
         "%s-%s%d",
-        var.vpc_name,
+        var.name,
         element(var.private_subnet_names, floor(count.index / var.az_count)),
         count.index % var.az_count + 1,
       )
@@ -206,7 +206,7 @@ resource "aws_route_table" "public_route_table" {
   tags = merge(
     local.tags,
     {
-      Name = format("%s-PublicRouteTable", var.vpc_name)
+      Name = format("%s-PublicRouteTable", var.name)
     },
   )
 }
@@ -219,7 +219,7 @@ resource "aws_route_table" "private_route_table" {
   tags = merge(
     local.tags,
     {
-      Name = format("%s-PrivateRouteTable%d", var.vpc_name, count.index + 1)
+      Name = format("%s-PrivateRouteTable%d", var.name, count.index + 1)
     },
   )
 }
@@ -266,7 +266,7 @@ resource "aws_vpn_gateway" "vpn_gateway" {
   tags = merge(
     local.tags,
     {
-      Name               = format("%s-VPNGateway", var.vpc_name)
+      Name               = format("%s-VPNGateway", var.name)
       "transitvpc:spoke" = var.spoke_vpc
     },
   )
@@ -338,13 +338,13 @@ resource "aws_flow_log" "cw_vpc_log" {
 resource "aws_cloudwatch_log_group" "flowlog_group" {
   count = var.build_flow_logs ? 1 : 0
 
-  name = "${var.vpc_name}-FlowLogs"
+  name = "${var.name}-FlowLogs"
 }
 
 resource "aws_iam_role" "flowlog_role" {
   count = var.build_flow_logs ? 1 : 0
 
-  name = "${var.vpc_name}-FlowLogsRole"
+  name = "${var.name}-FlowLogsRole"
 
   assume_role_policy = <<EOF
 {
@@ -367,7 +367,7 @@ EOF
 resource "aws_iam_role_policy" "flowlog_policy" {
   count = var.build_flow_logs ? 1 : 0
 
-  name = "${var.vpc_name}-FlowLogsPolicy"
+  name = "${var.name}-FlowLogsPolicy"
   role = aws_iam_role.flowlog_role[0].id
 
   policy = <<EOF

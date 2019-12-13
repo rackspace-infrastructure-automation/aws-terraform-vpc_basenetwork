@@ -10,7 +10,7 @@ provider "aws" {
 module "vpc" {
   source = "../../module"
 
-  vpc_name   = "Test2VPC"
+  name       = "Test2VPC"
   custom_azs = ["us-west-2a", "us-west-2b"]
 
   cidr_range             = "172.19.0.0/19"

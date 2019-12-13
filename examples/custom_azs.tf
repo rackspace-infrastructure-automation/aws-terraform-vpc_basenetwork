@@ -10,7 +10,7 @@ provider "aws" {
 module "vpc" {
   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=v0.0.10"
 
-  vpc_name   = "MyVPC"
+  name       = "MyVPC"
   custom_azs = ["us-west-2a", "us-west-2b"]
 
   cidr_range             = "10.0.0.0/19"

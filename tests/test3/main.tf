@@ -10,6 +10,6 @@ provider "aws" {
 module "vpc" {
   source = "../../module"
 
-  vpc_name  = "Test1VPC"
+  name      = "Test1VPC"
   build_igw = "false"
 }
