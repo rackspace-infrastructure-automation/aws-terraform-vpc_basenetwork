@@ -1,12 +1,16 @@
+terraform {
+  required_version = ">= 0.12"
+}
+
 provider "aws" {
-  version = "~> 1.2"
+  version = "~> 2.2"
   region  = "us-west-2"
 }
 
 module "vpc" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=v0.0.10"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=v0.12.0"
 
-  vpc_name   = "MyVPC"
+  name       = "MyVPC"
   custom_azs = ["us-west-2a", "us-west-2b"]
 
   cidr_range             = "10.0.0.0/19"
