@@ -5,7 +5,7 @@ variable "az_count" {
 }
 
 variable "build_flow_logs" {
-  description = "Whether or not to build flow log components in cloud watch logs"
+  description = "Whether or not to build flow log components in Cloudwatch Logs"
   default     = false
   type        = bool
 }
@@ -42,6 +42,12 @@ variable "cidr_range" {
   description = "CIDR range for the VPC"
   type        = string
   default     = "172.18.0.0/19"
+}
+
+variable "cloudwatch_flowlog_retention" {
+  description = "The number of days to retain flowlogs in CLoudwatch Logs. Valid values are: [0, 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653]. A value of `0` will retain indefinitely."
+  type        = number
+  default     = 14
 }
 
 variable "custom_azs" {
@@ -111,7 +117,7 @@ variable "logging_bucket_force_destroy" {
 }
 
 variable "logging_bucket_name" {
-  description = "Bucket name to store s3 flow logs. If empty, to create random bucket name. In conjuction with build_s3_flow_logs"
+  description = "Bucket name to store s3 flow logs. If empty, a random bucket name is generated. Use in conjuction with `build_s3_flow_logs`"
   type        = string
   default     = ""
 }
@@ -120,12 +126,6 @@ variable "logging_bucket_prefix" {
   description = "The prefix for the location in the S3 bucket. If you don't specify a prefix, the access logs are stored in the root of the bucket."
   type        = string
   default     = ""
-}
-
-variable "logging_bucket_retention" {
-  description = "The number of days to retain load balancer logs. 0 to ratain forever."
-  type        = number
-  default     = 14
 }
 
 variable "name" {
@@ -211,6 +211,12 @@ EOF
 
   type    = number
   default = 1
+}
+
+variable "s3_flowlog_retention" {
+  description = "The number of days to retain flowlogs in s3. A value of `0` will retain indefinitely."
+  type        = number
+  default     = 14
 }
 
 variable "spoke_vpc" {
