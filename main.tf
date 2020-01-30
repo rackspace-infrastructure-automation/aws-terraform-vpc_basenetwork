@@ -333,7 +333,7 @@ resource "aws_s3_bucket" "vpc_log_bucket" {
     prefix  = var.logging_bucket_prefix
 
     expiration {
-      days = var.logging_bucket_retention
+      days = var.s3_flowlog_retention
     }
   }
 }
@@ -350,7 +350,8 @@ resource "aws_flow_log" "cw_vpc_log" {
 resource "aws_cloudwatch_log_group" "flowlog_group" {
   count = var.build_flow_logs ? 1 : 0
 
-  name = "${var.name}-FlowLogs"
+  name              = "${var.name}-FlowLogs"
+  retention_in_days = var.cloudwatch_flowlog_retention
 }
 
 resource "aws_iam_role" "flowlog_role" {
