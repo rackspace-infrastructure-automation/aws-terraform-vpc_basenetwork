@@ -1,22 +1,22 @@
 /**
  * # aws-terraform-vpc_basenetwork
  *
- *This module sets up basic network components for an account in a specific region. Optionally it will setup a basic VPN gateway and VPC flow logs.
+ * This module sets up basic network components for an account in a specific region. Optionally it will setup a basic VPN gateway and VPC flow logs.
  *
- *## Basic Usage
+ * ## Basic Usage
  *
- *```HCL
- *module "vpc" {
- *  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=v0.12.0"
+ * ```HCL
+ * module "vpc" {
+ *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=v0.12.0"
  *
- *  vpc_name = "MyVPC"
- *}
- *```
+ *   vpc_name = "MyVPC"
+ * }
+ * ```
  *
  * Full working references are available at [examples](examples)
- *## Default Resources
+ * ## Default Resources
  *
- *By default only `vpc_name` is required to be set. Unless changed `aws_region` defaults to `us-west-2` and will need to be updated for other regions. `source` will also need to be declared depending on where the module lives. Given default settings the following resources are created:
+ * By default only `vpc_name` is required to be set. Unless changed `aws_region` defaults to `us-west-2` and will need to be updated for other regions. `source` will also need to be declared depending on where the module lives. Given default settings the following resources are created:
  *
  * - VPC Flow Logs
  * - 2 AZs with public/private subnets from the list of 3 static CIDRs ranges available for each as defaults
@@ -25,24 +25,24 @@
  * - EIPs will be created in all public subnets for NAT gateways to use
  * - Route Tables, including routes to NAT gateways if applicable
  *
- *## Terraform 0.12 upgrade
+ * ## Terraform 0.12 upgrade
  *
- *Several changes were required while adding terraform 0.12 compatibility.  The following changes should be
- *made when upgrading from a previous release to version 0.12.0 or higher.
+ * Several changes were required while adding terraform 0.12 compatibility.  The following changes should be
+ * made when upgrading from a previous release to version 0.12.0 or higher.
  *
- *### Module variables
+ * ### Module variables
  *
- *The following module variables were updated to better meet current Rackspace style guides:
+ * The following module variables were updated to better meet current Rackspace style guides:
  *
- *- `custom_tags` -> `tags`
- *- `vpc_name` -> `name`
+ * - `custom_tags` -> `tags`
+ * - `vpc_name` -> `name`
  */
 
 terraform {
   required_version = ">= 0.12"
 
   required_providers {
-    aws = ">= 2.1.0"
+    aws = ">= 2.7.0"
   }
 }
 
