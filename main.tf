@@ -1,48 +1,48 @@
 /**
  * # aws-terraform-vpc_basenetwork
  *
- *This module sets up basic network components for an account in a specific region. Optionally it will setup a basic VPN gateway and VPC flow logs.
+ * This module sets up basic network components for an account in a specific region. Optionally it will setup a basic VPN gateway and VPC flow logs.
  *
- *## Basic Usage
+ * ## Basic Usage
  *
- *```HCL
- *module "vpc" {
- *  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=v0.12.0"
+ * ```HCL
+ * module "vpc" {
+ *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=v0.12.2"
  *
- *  vpc_name = "MyVPC"
- *}
- *```
+ *   vpc_name = "MyVPC"
+ * }
+ * ```
  *
- * Full working references are available at [examples](examples)
- *## Default Resources
+ *  Full working references are available at [examples](examples)
+ * ## Default Resources
  *
- *By default only `vpc_name` is required to be set. Unless changed `aws_region` defaults to `us-west-2` and will need to be updated for other regions. `source` will also need to be declared depending on where the module lives. Given default settings the following resources are created:
+ * By default only `vpc_name` is required to be set. Unless changed `aws_region` defaults to `us-west-2` and will need to be updated for other regions. `source` will also need to be declared depending on where the module lives. Given default settings the following resources are created:
  *
- * - VPC Flow Logs
- * - 2 AZs with public/private subnets from the list of 3 static CIDRs ranges available for each as defaults
- * - Public/private subnets with the count related to custom_azs if defined or region AZs automatically calculated by Terraform otherwise
- * - NAT Gateways will be created in each AZ's first public subnet
- * - EIPs will be created in all public subnets for NAT gateways to use
- * - Route Tables, including routes to NAT gateways if applicable
+ *  - VPC Flow Logs
+ *  - 2 AZs with public/private subnets from the list of 3 static CIDRs ranges available for each as defaults
+ *  - Public/private subnets with the count related to custom_azs if defined or region AZs automatically calculated by Terraform otherwise
+ *  - NAT Gateways will be created in each AZ's first public subnet
+ *  - EIPs will be created in all public subnets for NAT gateways to use
+ *  - Route Tables, including routes to NAT gateways if applicable
  *
- *## Terraform 0.12 upgrade
+ * ## Terraform 0.12 upgrade
  *
- *Several changes were required while adding terraform 0.12 compatibility.  The following changes should be
- *made when upgrading from a previous release to version 0.12.0 or higher.
+ * Several changes were required while adding terraform 0.12 compatibility.  The following changes should be
+ * made when upgrading from a previous release to version 0.12.0 or higher.
  *
- *### Module variables
+ * ### Module variables
  *
- *The following module variables were updated to better meet current Rackspace style guides:
+ * The following module variables were updated to better meet current Rackspace style guides:
  *
- *- `custom_tags` -> `tags`
- *- `vpc_name` -> `name`
+ * - `custom_tags` -> `tags`
+ * - `vpc_name` -> `name`
  */
 
 terraform {
   required_version = ">= 0.12"
 
   required_providers {
-    aws = ">= 2.1.0"
+    aws = ">= 2.7.0"
   }
 }
 
@@ -55,9 +55,19 @@ locals {
     Environment     = var.environment
   }
 
+  single_nat_tag = {
+    true = {
+      HA = "Disabled"
+    }
+
+    false = {}
+  }
+
+  nat_count = var.single_nat ? 1 : var.az_count
+
   tags = merge(
     var.tags,
-    local.base_tags
+    local.base_tags,
   )
 
   azs = slice(
@@ -83,6 +93,7 @@ resource "aws_vpc" "vpc" {
 
   tags = merge(
     local.tags,
+    local.single_nat_tag[var.single_nat],
     {
       Name = var.name
     },
@@ -128,7 +139,7 @@ resource "aws_internet_gateway" "igw" {
 #############
 
 resource "aws_eip" "nat_eip" {
-  count = var.build_nat_gateways && var.build_igw ? var.az_count : 0
+  count = var.build_nat_gateways && var.build_igw ? local.nat_count : 0
 
   vpc = true
 
@@ -143,13 +154,14 @@ resource "aws_eip" "nat_eip" {
 }
 
 resource "aws_nat_gateway" "nat" {
-  count = var.build_nat_gateways && var.build_igw ? var.az_count : 0
+  count = var.build_nat_gateways && var.build_igw ? local.nat_count : 0
 
   allocation_id = element(aws_eip.nat_eip.*.id, count.index)
   subnet_id     = element(aws_subnet.public_subnet.*.id, count.index)
 
   tags = merge(
     local.tags,
+    local.single_nat_tag[var.single_nat],
     {
       Name = format("%s-NATGW%d", var.name, count.index + 1)
     },
@@ -173,6 +185,7 @@ resource "aws_subnet" "public_subnet" {
   tags = merge(
     var.public_subnet_tags[length(var.public_subnet_tags) == 1 ? 0 : floor(count.index / var.az_count)],
     local.tags,
+    local.single_nat_tag[var.single_nat],
     {
       Name = format(
         "%s-%s%d",
@@ -195,6 +208,7 @@ resource "aws_subnet" "private_subnet" {
   tags = merge(
     var.private_subnet_tags[length(var.private_subnet_tags) == 1 ? 0 : floor(count.index / var.az_count)],
     local.tags,
+    local.single_nat_tag[var.single_nat],
     {
       Name = format(
         "%s-%s%d",
@@ -230,6 +244,7 @@ resource "aws_route_table" "private_route_table" {
 
   tags = merge(
     local.tags,
+    local.single_nat_tag[var.single_nat],
     {
       Name = format("%s-PrivateRouteTable%d", var.name, count.index + 1)
     },
