@@ -11,13 +11,9 @@ variable "build_flow_logs" {
 }
 
 variable "build_igw" {
-  description = <<EOF
-Whether or not to build an internet gateway.  If disabled, no public subnets or route tables, internet gateway,
-or NAT Gateways will be created.
-EOF
-
-  type    = bool
-  default = true
+  description = "Whether or not to build an internet gateway.  If disabled, no public subnets or route tables, internet gateway, or NAT Gateways will be created."
+  type        = bool
+  default     = true
 }
 
 variable "build_nat_gateways" {
@@ -217,6 +213,12 @@ variable "s3_flowlog_retention" {
   description = "The number of days to retain flowlogs in s3. A value of `0` will retain indefinitely."
   type        = number
   default     = 14
+}
+
+variable "single_nat" {
+  description = "Deploy VPC in single NAT mode."
+  type        = bool
+  default     = false
 }
 
 variable "spoke_vpc" {
