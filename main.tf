@@ -411,7 +411,7 @@ resource "aws_iam_role_policy" "flowlog_policy" {
         "logs:DescribeLogStreams"
       ],
       "Effect": "Allow",
-      "Resource": "${aws_cloudwatch_log_group.flowlog_group[0].arn}"
+      "Resource": "${replace(aws_cloudwatch_log_group.flowlog_group[0].arn, ":*", "")}:*"
     }
   ]
 }
