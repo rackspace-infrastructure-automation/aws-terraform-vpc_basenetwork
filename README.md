@@ -36,16 +36,51 @@ The following module variables were updated to better meet current Rackspace sty
 - `custom_tags` -> `tags`
 - `vpc_name` -> `name`
 
+## Requirements
+
+| Name | Version |
+|------|---------|
+| terraform | >= 0.12 |
+| aws | >= 2.7.0 |
+
 ## Providers
 
 | Name | Version |
 |------|---------|
 | aws | >= 2.7.0 |
 
+## Modules
+
+No Modules.
+
+## Resources
+
+| Name |
+|------|
+| [aws_availability_zones](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/data-sources/availability_zones) |
+| [aws_cloudwatch_log_group](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/cloudwatch_log_group) |
+| [aws_eip](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/eip) |
+| [aws_flow_log](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/flow_log) |
+| [aws_iam_role](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/iam_role) |
+| [aws_iam_role_policy](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/iam_role_policy) |
+| [aws_internet_gateway](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/internet_gateway) |
+| [aws_nat_gateway](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/nat_gateway) |
+| [aws_region](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/data-sources/region) |
+| [aws_route](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/route) |
+| [aws_route_table](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/route_table) |
+| [aws_route_table_association](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/route_table_association) |
+| [aws_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/s3_bucket) |
+| [aws_subnet](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/subnet) |
+| [aws_vpc](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/vpc) |
+| [aws_vpc_dhcp_options](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/vpc_dhcp_options) |
+| [aws_vpc_dhcp_options_association](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/vpc_dhcp_options_association) |
+| [aws_vpn_gateway](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/vpn_gateway) |
+| [aws_vpn_gateway_route_propagation](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/vpn_gateway_route_propagation) |
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:-----:|
+|------|-------------|------|---------|:--------:|
 | az\_count | Number of AZs to utilize for the subnets | `number` | `2` | no |
 | build\_flow\_logs | Whether or not to build flow log components in Cloudwatch Logs | `bool` | `false` | no |
 | build\_igw | Whether or not to build an internet gateway.  If disabled, no public subnets or route tables, internet gateway, or NAT Gateways will be created. | `bool` | `true` | no |
@@ -61,7 +96,7 @@ The following module variables were updated to better meet current Rackspace sty
 | enable\_dns\_hostnames | Whether or not to enable DNS hostnames for the VPC | `bool` | `true` | no |
 | enable\_dns\_support | Whether or not to enable DNS support for the VPC | `bool` | `true` | no |
 | environment | Application environment for which this network is being created. e.g. Development/Production | `string` | `"Development"` | no |
-| logging\_bucket\_access\_control | Define ACL for Bucket from one of the [canned ACL](https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl): private, public-read, public-read-write, aws-exec-read, authenticated-read, bucket-owner-read, bucket-owner-full-control, log-delivery-write | `string` | `"bucket-owner-full-control"` | no |
+| logging\_bucket\_access\_control | Define ACL for Bucket from one of the [canned ACL](https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl): private, public-read, public-read-write, aws-exec-read, authenticated-read, log-delivery-write | `string` | `"private"` | no |
 | logging\_bucket\_encryption | Enable default bucket encryption. i.e. AES256 or aws:kms | `string` | `"AES256"` | no |
 | logging\_bucket\_encryption\_kms\_mster\_key | The AWS KMS master key ID used for the SSE-KMS encryption. This can only be used when you set the value of sse\_algorithm as aws:kms. | `string` | `""` | no |
 | logging\_bucket\_force\_destroy | Whether all objects should be deleted from the bucket so that the bucket can be destroyed without error. These objects are not recoverable. ie. true | `bool` | `false` | no |
@@ -96,4 +131,3 @@ The following module variables were updated to better meet current Rackspace sty
 | public\_subnets | The IDs of the public subnets |
 | vpc\_id | The ID of the VPC |
 | vpn\_gateway | The ID of the VPN gateway if one was created |
-
