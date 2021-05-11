@@ -124,7 +124,9 @@ No Modules.
 | flowlog\_log\_group\_arn | The ARN of the flow log CloudWatch log group if one was created |
 | internet\_gateway | The ID of the Internet Gateway |
 | nat\_gateway | The ID of the NAT Gateway if one was created |
-| nat\_gateway\_eip | The IP of the NAT Gateway if one was created |
+| nat\_gateway\_ids | The ID of the NAT Gateway if one was created |
+| nat\_gateway\_private\_ips | The private IPs of the NAT Gateway if one was created |
+| nat\_gateway\_public\_ips | The public IPs of the NAT Gateway if one was created |
 | private\_route\_tables | The IDs for the private route tables |
 | private\_subnets | The IDs for the private subnets |
 | public\_route\_tables | The IDs for the public route tables |

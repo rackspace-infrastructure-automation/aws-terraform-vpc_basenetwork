@@ -18,9 +18,19 @@ output "nat_gateway" {
   value       = aws_nat_gateway.nat.*.id
 }
 
-output "nat_gateway_eip" {
-  description = "The IP of the NAT Gateway if one was created"
+output "nat_gateway_ids" {
+  description = "The ID of the NAT Gateway if one was created"
   value       = aws_eip.nat_eip.*.id
+}
+
+output "nat_gateway_private_ips" {
+  description = "The private IPs of the NAT Gateway if one was created"
+  value       = aws_eip.nat_eip.*.private_ip
+}
+
+output "nat_gateway_public_ips" {
+  description = "The public IPs of the NAT Gateway if one was created"
+  value       = aws_eip.nat_eip.*.public_ip
 }
 
 output "private_route_tables" {
