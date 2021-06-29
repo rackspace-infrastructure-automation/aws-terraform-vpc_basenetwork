@@ -10,7 +10,7 @@ output "flowlog_log_group_arn" {
 
 output "flowlog_log_group_name" {
   description = "The name of the flow log CloudWatch log group if one was created"
-  value       = aws_cloudwatch_log_group.flowlog_group.name
+  value       = var.build_flow_logs ? aws_cloudwatch_log_group.flowlog_group[0].name : ""
 }
 
 output "internet_gateway" {
