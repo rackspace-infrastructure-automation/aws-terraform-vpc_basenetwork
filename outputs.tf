@@ -8,6 +8,11 @@ output "flowlog_log_group_arn" {
   value       = join(" ", aws_cloudwatch_log_group.flowlog_group.*.arn)
 }
 
+output "flowlog_log_group_name" {
+  description = "The name of the flow log CloudWatch log group if one was created"
+  value       = aws_cloudwatch_log_group.flowlog_group.name
+}
+
 output "internet_gateway" {
   description = "The ID of the Internet Gateway"
   value       = aws_internet_gateway.igw.*.id
