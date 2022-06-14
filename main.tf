@@ -336,12 +336,12 @@ resource "aws_s3_bucket" "vpc_log_bucket" {
 }
 
 resource "aws_s3_bucket_acl" "private_acl" {
-  bucket = aws_s3_bucket.vpc_log_bucket.id
+  bucket = aws_s3_bucket.vpc_log_bucket[count.index]
   acl    = var.logging_bucket_access_control
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "s3_sse" {
-  bucket = aws_s3_bucket.vpc_log_bucket.id
+  bucket = aws_s3_bucket.vpc_log_bucket[count.index]
   rule {
     apply_server_side_encryption_by_default {
       kms_master_key_id = var.logging_bucket_encryption_kms_mster_key
@@ -351,7 +351,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "s3_sse" {
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "s3_lifecycle" {
-  bucket = aws_s3_bucket.vpc_log_bucket.id
+  bucket = aws_s3_bucket.vpc_log_bucket[count.index]
   rule {
     enabled = true
     prefix  = var.logging_bucket_prefix
