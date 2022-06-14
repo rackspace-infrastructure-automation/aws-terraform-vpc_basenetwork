@@ -359,8 +359,9 @@ resource "aws_s3_bucket_lifecycle_configuration" "s3_lifecycle" {
 
   bucket = aws_s3_bucket.vpc_log_bucket[count.index]
   rule {
-    enabled = true
-    prefix  = var.logging_bucket_prefix
+    id     = "Expiration"
+    status = "Enabled"
+    prefix = var.logging_bucket_prefix
     expiration {
       days = var.s3_flowlog_retention
     }
