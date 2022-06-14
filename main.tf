@@ -42,7 +42,7 @@ terraform {
   required_version = ">= 0.12"
 
   required_providers {
-    aws = ">= 2.7.0"
+    aws = "~> 3.0"
   }
 }
 
@@ -336,11 +336,15 @@ resource "aws_s3_bucket" "vpc_log_bucket" {
 }
 
 resource "aws_s3_bucket_acl" "private_acl" {
+  count = var.build_s3_flow_logs ? 1 : 0
+
   bucket = aws_s3_bucket.vpc_log_bucket[count.index]
   acl    = var.logging_bucket_access_control
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "s3_sse" {
+  count = var.build_s3_flow_logs ? 1 : 0
+
   bucket = aws_s3_bucket.vpc_log_bucket[count.index]
   rule {
     apply_server_side_encryption_by_default {
@@ -351,6 +355,8 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "s3_sse" {
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "s3_lifecycle" {
+  count = var.build_s3_flow_logs ? 1 : 0
+
   bucket = aws_s3_bucket.vpc_log_bucket[count.index]
   rule {
     enabled = true
