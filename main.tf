@@ -329,24 +329,32 @@ resource "aws_flow_log" "s3_vpc_log" {
 resource "aws_s3_bucket" "vpc_log_bucket" {
   count = var.build_s3_flow_logs ? 1 : 0
 
-  acl           = var.logging_bucket_access_control
   bucket        = var.logging_bucket_name
   force_destroy = var.logging_bucket_force_destroy
   tags          = local.tags
 
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        kms_master_key_id = var.logging_bucket_encryption_kms_mster_key
-        sse_algorithm     = var.logging_bucket_encryption
-      }
+}
+
+resource "aws_s3_bucket_acl" "private_acl" {
+  bucket = aws_s3_bucket.vpc_log_bucket.id
+  acl    = var.logging_bucket_access_control
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "s3_sse" {
+  bucket = aws_s3_bucket.vpc_log_bucket.id
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = var.logging_bucket_encryption_kms_mster_key
+      sse_algorithm     = var.logging_bucket_encryption
     }
   }
+}
 
-  lifecycle_rule {
+resource "aws_s3_bucket_lifecycle_configuration" "s3_lifecycle" {
+  bucket = aws_s3_bucket.vpc_log_bucket.id
+  rule {
     enabled = true
     prefix  = var.logging_bucket_prefix
-
     expiration {
       days = var.s3_flowlog_retention
     }

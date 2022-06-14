@@ -70,6 +70,9 @@ No Modules.
 | [aws_route_table](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/route_table) |
 | [aws_route_table_association](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/route_table_association) |
 | [aws_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/s3_bucket) |
+| [aws_s3_bucket_acl](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/s3_bucket_acl) |
+| [aws_s3_bucket_lifecycle_configuration](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/s3_bucket_lifecycle_configuration) |
+| [aws_s3_bucket_server_side_encryption_configuration](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/s3_bucket_server_side_encryption_configuration) |
 | [aws_subnet](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/subnet) |
 | [aws_vpc](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/vpc) |
 | [aws_vpc_dhcp_options](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/vpc_dhcp_options) |
