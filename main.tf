@@ -42,7 +42,7 @@ terraform {
   required_version = ">= 0.12"
 
   required_providers {
-    aws = ">= 2.7.0"
+    aws = "~> 3.0"
   }
 }
 
@@ -329,24 +329,39 @@ resource "aws_flow_log" "s3_vpc_log" {
 resource "aws_s3_bucket" "vpc_log_bucket" {
   count = var.build_s3_flow_logs ? 1 : 0
 
-  acl           = var.logging_bucket_access_control
   bucket        = var.logging_bucket_name
   force_destroy = var.logging_bucket_force_destroy
   tags          = local.tags
 
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        kms_master_key_id = var.logging_bucket_encryption_kms_mster_key
-        sse_algorithm     = var.logging_bucket_encryption
-      }
+}
+
+resource "aws_s3_bucket_acl" "private_acl" {
+  count = var.build_s3_flow_logs ? 1 : 0
+
+  bucket = aws_s3_bucket.vpc_log_bucket[count.index]
+  acl    = var.logging_bucket_access_control
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "s3_sse" {
+  count = var.build_s3_flow_logs ? 1 : 0
+
+  bucket = aws_s3_bucket.vpc_log_bucket[count.index]
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = var.logging_bucket_encryption_kms_mster_key
+      sse_algorithm     = var.logging_bucket_encryption
     }
   }
+}
 
-  lifecycle_rule {
-    enabled = true
-    prefix  = var.logging_bucket_prefix
+resource "aws_s3_bucket_lifecycle_configuration" "s3_lifecycle" {
+  count = var.build_s3_flow_logs ? 1 : 0
 
+  bucket = aws_s3_bucket.vpc_log_bucket[count.index]
+  rule {
+    id     = "Expiration"
+    status = "Enabled"
+    prefix = var.logging_bucket_prefix
     expiration {
       days = var.s3_flowlog_retention
     }
