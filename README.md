@@ -40,7 +40,7 @@ The following module variables were updated to better meet current Rackspace sty
 
 | Name | Version |
 |------|---------|
-| terraform | >= 0.12 |
+| terraform | >= 0.13.7 |
 | aws | ~> 3.0 |
 
 ## Providers
