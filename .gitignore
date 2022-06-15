@@ -8,6 +8,9 @@
 # .tfvars files
 *.tfvars
 
+# .terraform.lock.hcl -- not currently using
+.terraform.lock.hcl
+
 # Plans
 *.plans
 

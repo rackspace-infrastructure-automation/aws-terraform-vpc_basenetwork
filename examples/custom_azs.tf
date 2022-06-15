@@ -8,7 +8,7 @@ provider "aws" {
 }
 
 module "vpc" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=v0.12.2"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=v0.12.8"
 
   name       = "MyVPC"
   custom_azs = ["us-west-2a", "us-west-2b"]
