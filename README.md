@@ -6,7 +6,7 @@ This module sets up basic network components for an account in a specific region
 
 ```HCL
 module "vpc" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=v0.12.2"
+  source = "git::https://github.com/rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork.git//?ref=v0.12.8"
 
   vpc_name = "MyVPC"
 }

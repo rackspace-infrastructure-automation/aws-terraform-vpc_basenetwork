@@ -14,7 +14,7 @@ provider "aws" {
 }
 
 module "vpc" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=v0.12.8"
+  source = "git::https://github.com/rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork.git//?ref=v0.12.8"
 
   name      = "MyVPC"
   build_vpn = true
