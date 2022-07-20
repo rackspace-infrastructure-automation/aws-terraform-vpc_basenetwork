@@ -9,7 +9,7 @@
  * module "vpc" {
  *   source = "git::https://github.com/rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork.git//?ref=v0.12.8"
  *
- *   vpc_name = "MyVPC"
+ *   name = "MyVPC"
  * }
  * ```
  *
