@@ -42,7 +42,7 @@ terraform {
   required_version = ">= 0.13.7"
 
   required_providers {
-    aws = "~> 3.0"
+    aws = ">= 3.0"
   }
 }
 
@@ -361,7 +361,10 @@ resource "aws_s3_bucket_lifecycle_configuration" "s3_lifecycle" {
   rule {
     id     = "Expiration"
     status = "Enabled"
-    prefix = var.logging_bucket_prefix
+
+    filter {
+      prefix = var.logging_bucket_prefix
+    }
     expiration {
       days = var.s3_flowlog_retention
     }
