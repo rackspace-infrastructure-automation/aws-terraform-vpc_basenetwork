@@ -39,10 +39,13 @@
  */
 
 terraform {
-  required_version = ">= 0.13.7"
+  required_version = ">= 0.13"
 
   required_providers {
-    aws = "~> 3.0"
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 4.0"
+    }
   }
 }
 
@@ -141,7 +144,7 @@ resource "aws_internet_gateway" "igw" {
 resource "aws_eip" "nat_eip" {
   count = var.build_nat_gateways && var.build_igw ? local.nat_count : 0
 
-  vpc = true
+  domain = "vpc"
 
   tags = merge(
     local.tags,
