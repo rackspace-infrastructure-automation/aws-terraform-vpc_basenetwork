@@ -1,10 +1,10 @@
 terraform {
-  required_version = ">= 0.13.7"
+  required_version = ">= 0.13"
 
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 3.0"
+      version = ">= 4.0"
     }
   }
 }
@@ -14,7 +14,7 @@ provider "aws" {
 }
 
 module "vpc" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=v0.12.8"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=v0.12.9"
 
   name       = "MyVPC"
   custom_azs = ["us-west-2a", "us-west-2b"]

@@ -40,14 +40,14 @@ The following module variables were updated to better meet current Rackspace sty
 
 | Name | Version |
 |------|---------|
-| terraform | >= 0.13.7 |
-| aws | ~> 3.0 |
+| terraform | >= 0.13 |
+| aws | >= 4.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | ~> 3.0 |
+| aws | >= 4.0 |
 
 ## Modules
 
@@ -57,28 +57,28 @@ No Modules.
 
 | Name |
 |------|
-| [aws_availability_zones](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/data-sources/availability_zones) |
-| [aws_cloudwatch_log_group](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/cloudwatch_log_group) |
-| [aws_eip](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/eip) |
-| [aws_flow_log](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/flow_log) |
-| [aws_iam_role](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/iam_role) |
-| [aws_iam_role_policy](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/iam_role_policy) |
-| [aws_internet_gateway](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/internet_gateway) |
-| [aws_nat_gateway](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/nat_gateway) |
-| [aws_region](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/data-sources/region) |
-| [aws_route](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/route) |
-| [aws_route_table](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/route_table) |
-| [aws_route_table_association](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/route_table_association) |
-| [aws_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/s3_bucket) |
-| [aws_s3_bucket_acl](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/s3_bucket_acl) |
-| [aws_s3_bucket_lifecycle_configuration](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/s3_bucket_lifecycle_configuration) |
-| [aws_s3_bucket_server_side_encryption_configuration](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/s3_bucket_server_side_encryption_configuration) |
-| [aws_subnet](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/subnet) |
-| [aws_vpc](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/vpc) |
-| [aws_vpc_dhcp_options](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/vpc_dhcp_options) |
-| [aws_vpc_dhcp_options_association](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/vpc_dhcp_options_association) |
-| [aws_vpn_gateway](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/vpn_gateway) |
-| [aws_vpn_gateway_route_propagation](https://registry.terraform.io/providers/hashicorp/aws/3.0/docs/resources/vpn_gateway_route_propagation) |
+| [aws_availability_zones](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/data-sources/availability_zones) |
+| [aws_cloudwatch_log_group](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/cloudwatch_log_group) |
+| [aws_eip](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/eip) |
+| [aws_flow_log](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/flow_log) |
+| [aws_iam_role](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/iam_role) |
+| [aws_iam_role_policy](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/iam_role_policy) |
+| [aws_internet_gateway](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/internet_gateway) |
+| [aws_nat_gateway](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/nat_gateway) |
+| [aws_region](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/data-sources/region) |
+| [aws_route](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/route) |
+| [aws_route_table](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/route_table) |
+| [aws_route_table_association](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/route_table_association) |
+| [aws_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/s3_bucket) |
+| [aws_s3_bucket_acl](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/s3_bucket_acl) |
+| [aws_s3_bucket_lifecycle_configuration](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/s3_bucket_lifecycle_configuration) |
+| [aws_s3_bucket_server_side_encryption_configuration](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/s3_bucket_server_side_encryption_configuration) |
+| [aws_subnet](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/subnet) |
+| [aws_vpc](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/vpc) |
+| [aws_vpc_dhcp_options](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/vpc_dhcp_options) |
+| [aws_vpc_dhcp_options_association](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/vpc_dhcp_options_association) |
+| [aws_vpn_gateway](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/vpn_gateway) |
+| [aws_vpn_gateway_route_propagation](https://registry.terraform.io/providers/hashicorp/aws/4.0/docs/resources/vpn_gateway_route_propagation) |
 
 ## Inputs
 
